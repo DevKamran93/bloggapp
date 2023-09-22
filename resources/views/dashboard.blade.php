@@ -136,6 +136,7 @@
                         @endauth
                     </a>
                 </li>
+
                 <li class="nav-item d-none d-sm-inline-block">
                     <div class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
                         <a class="dropdown-item" href="{{ route('logout') }}"
