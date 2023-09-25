@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Admin\CategoryController;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Route;
@@ -30,5 +31,11 @@ Route::get('/login', function () {
 Auth::routes();
 Route::group(['prefix' => 'admin', 'middleware' => 'auth'], function () {
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
+    Route::get('/categories', [CategoryController::class, 'index'])->name('categories');
+    Route::post('/category/store', [CategoryController::class, 'store'])->name('category.store');
+    Route::get('/category/getAllCategories', [CategoryController::class, 'getAllCategoryData'])->name('category.getAllCategoryData');
+    Route::patch('/categories/update', [CategoryController::class, 'update'])->name('category.update');
+    Route::post('/categories/destroyOrRestore', [CategoryController::class, 'destroyOrRestore'])->name('category.destroyOrRestore');
+    // Route::post('/categories/restore', [CategoryController::class, 'restore'])->name('category.restore');
 });
 // Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
