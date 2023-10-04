@@ -7,13 +7,15 @@
     $segments = '';
     foreach (Request::segments() as $key => $segment) {
         $segments .= '/' . $segment;
-        $current_page_name = ucwords(str_replace('_', ' ', $segment));
+        $page = ucwords(str_replace('_', ' ', $segment));
     }
+    $desired_path = substr($segments, strpos($segments, '/', 1) + 1);
+    $current_page = ucwords(str_replace('/', ' ', $desired_path));
     // print_r(Request::segments(1));
     // echo $segments . '<br>';
     // echo $segment;
     // echo $current_page_link;
-    // echo $current_page_name;
+    // echo $page;
 @endphp
 
 <head>
@@ -21,7 +23,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
-    <title>{{ Auth::check() && Auth::user()->role_id == 1 ? 'Admin' : 'Moderator' }} | {{ $current_page_name ?? '' }}
+    <title>{{ Auth::check() && Auth::user()->role_id == 1 ? 'Admin' : 'Moderator' }} | {{ $page ?? '' }}
     </title>
 
     <link rel="stylesheet"
@@ -48,7 +50,10 @@
         href="{{ asset('assets/plugins/datatables-responsive/css/responsive.bootstrap4.min.css') }}">
     <link rel="stylesheet" href="{{ asset('assets/plugins/datatables-buttons/css/buttons.bootstrap4.min.css') }}">
     <link rel="stylesheet" href="{{ asset('assets/plugins/sweetalert2-theme-bootstrap-4/bootstrap-4.min.css') }}">
-
+    <link rel="stylesheet" href="{{ asset('assets/plugins/summernote/summernote-bs4.min.css') }}">
+    <link rel="stylesheet" href="{{ asset('assets/plugins/select2/css/select2.min.css') }}">
+    <link rel="stylesheet" href="{{ asset('assets/plugins/select2-bootstrap4-theme/select2-bootstrap4.min.css') }}">
+    @notifyCss
     {{-- <link rel="stylesheet" href="plugins/icheck-bootstrap/icheck-bootstrap.min.css"> --}}
 
     {{-- <link rel="stylesheet" href="plugins/jqvmap/jqvmap.min.css"> --}}
@@ -68,16 +73,22 @@
             color: #fff !important;
             border-color: #001f3f !important;
         }
+
+        #laravel-notify {
+            position: relative;
+            z-index: 999999 !important;
+        }
     </style>
 </head>
 
 <body class="hold-transition sidebar-mini layout-fixed">
     <div class="wrapper">
-
-        <div class="preloader flex-column justify-content-center align-items-center">
+        <x-notify::notify />
+        {{-- {!! Toastr::message() !!} --}}
+        {{-- <div class="preloader flex-column justify-content-center align-items-center">
             <img class="animation__shake" src="{{ asset('assets/dist/img/AdminLTELogo.png') }}" alt="AdminLTELogo"
-                height="60" width="60">
-        </div>
+                height="80" width="80">
+        </div> --}}
 
         <nav class="main-header navbar navbar-expand navbar-white navbar-light">
             <ul class="navbar-nav">
@@ -107,7 +118,12 @@
             </ul>
 
             <ul class="navbar-nav ml-auto">
-
+                <li class="nav-item d-flex justify-content-center align-items-center">
+                    <p class="font-weight-bold my-0">
+                        <span id="currentDate"></span>,
+                        <span id="currentTime"></span>
+                    </p>
+                </li>
                 <li class="nav-item">
                     <a class="nav-link" data-widget="navbar-search" href="#" role="button">
                         <i class="fas fa-search"></i>
@@ -302,6 +318,14 @@
                                 class="nav-link {{ $current_page_link === 'admin/categories' ? 'bg-gradient-primary active' : '' }}">
                                 <i class="nav-icon fas fa-tachometer-alt"></i>
                                 <p>Categories</p>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            {{-- <li class="nav-item menu-open"> --}}
+                            <a href="{{ route('blogs') }}"
+                                class="nav-link {{ $current_page_link === 'admin/blogs' ? 'bg-gradient-primary active' : '' }}">
+                                <i class="nav-icon fas fa-tachometer-alt"></i>
+                                <p>Blogs</p>
                             </a>
                         </li>
                         {{-- <li class="nav-item">
@@ -908,17 +932,16 @@
                         </li>
                     </ul>
                 </nav>
-
             </div>
-
         </aside>
 
         <div class="content-wrapper">
+
             <div class="content-header">
                 <div class="container-fluid">
                     <div class="row mb-2">
                         <div class="col-sm-6">
-                            <h1 class="m-0">{{ $current_page_name }}</h1>
+                            <h1 class="m-0">{{ $current_page }}</h1>
                         </div>
                         @if ($segment == 'categories')
                             <div class="col-sm-6">
@@ -926,11 +949,11 @@
                                     data-toggle="modal" data-target="#add_edit_category_modal" id="add_category">
                                     Add New
                                 </button>
-                                {{-- <ol class="breadcrumb float-sm-right">
-                                <li class="breadcrumb-item"><a
-                                        href="{{ $segments }}">{{ $current_page_name }}</a></li>
-                                <li class="breadcrumb-item active">Categories v1</li>
-                            </ol> --}}
+                            </div>
+                        @elseif($segment == 'blogs')
+                            <div class="col-sm-6">
+                                <a href="{{ route('blog.create') }}"
+                                    class="btn bg-gradient-navy btn-sm float-right">Add New</a>
                             </div>
                         @endif
                     </div>
@@ -959,7 +982,7 @@
 
     </div>
 
-
+    @notifyJs
     <script src="{{ asset('assets/plugins/jquery/jquery.min.js') }}"></script>
 
     <script src="{{ asset('assets/plugins/jquery-ui/jquery-ui.min.js') }}"></script>
@@ -1001,11 +1024,27 @@
     <script src="{{ asset('assets/plugins/datatables-buttons/js/buttons.colVis.min.js') }}"></script>
     <script src="{{ asset('assets/dist/js/adminlte2167.js?v=3.2.0') }}"></script>
     <script src="{{ asset('assets/plugins/sweetalert2/sweetalert2.min.js') }}"></script>
+    <script src="{{ asset('assets/dist/js/clock.js') }}"></script>
+    <script src="{{ asset('assets/plugins/summernote/summernote-bs4.min.js') }}"></script>
+    <script src="{{ asset('assets/plugins/select2/js/select2.full.min.js') }}"></script>
+
+    {{-- <script src="{{ asset('assets/plugins/bootstrap-switch/js/bootstrap-switch.min.js') }}"></script> --}}
+    {{-- <script src="{{ asset('assets/plugins/bs-stepper/js/bs-stepper.min.js') }}"></script> --}}
 
     <script src="dist/js/demo.js"></script>
 
     <script src="{{ asset('assets/dist/js/pages/dashboard.js') }}"></script>
     <script>
+        $(document).ready(function() {
+            // SummerNote Editor
+            $('#summernote').summernote({
+                height: 400,
+                // focus: true
+            });
+
+            $('[data-toggle="tooltip"]').tooltip();
+        });
+
         $.ajaxSetup({
             headers: {
                 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
@@ -1038,9 +1077,10 @@
                 }
             })
         }
-        $(function() {
 
-        });
+        $('.select2bs4').select2({
+            theme: 'bootstrap4'
+        })
     </script>
     @stack('javascript')
 

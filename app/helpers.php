@@ -3,19 +3,49 @@
 use Illuminate\Support\Str;
 use App\Models\Admin\Category;
 use Illuminate\Support\Facades\File;
+use Illuminate\Support\Facades\Storage;
 
+// if (!function_exists('storeImage')) {
+//     function storeImage($image, $folder)
+//     {
+//         $path = "assets/dist/admin/images/$folder";
+
+//         if (!File::exists(public_path($path))) {
+//             File::makeDirectory(public_path($path), 0755, true);
+//         }
+
+//         $new_image_name = time() . "-" . rand(100000, 999999) . "." . $image->extension();
+//         $image->move(public_path($path), $new_image_name);
+
+//         $full_path = url("$path/$new_image_name"); // Modify this line to generate the full path
+
+//         return $full_path;
+//     }
+// }
 if (!function_exists('storeImage')) {
     function storeImage($image, $folder)
     {
-        $path = "assets/admin/img/$folder";
+        $path = "images/$folder"; // Update the path to match your desired directory structure
 
-        if (!File::exists(public_path($path))) {
-            File::makeDirectory(public_path($path), 0755, true);
+        $full_path = Storage::disk('public')->path($path);
+
+        if (!File::exists($full_path)) {
+            File::makeDirectory($full_path, 0755, true);
         }
 
         $new_image_name = time() . "-" . rand(100000, 999999) . "." . $image->extension();
-        $image->move(public_path($path), $new_image_name);
-        return $new_image_name;
+        $image->storeAs($path, $new_image_name, 'public');
+
+        $full_path = url("storage/$path/$new_image_name"); // Generate the full path
+
+        return $full_path;
+    }
+}
+
+if (!function_exists('removeImage')) {
+    function removeImage($path)
+    {
+        Storage::disk('public')->delete($path);
     }
 }
 

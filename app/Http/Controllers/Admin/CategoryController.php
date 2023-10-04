@@ -16,12 +16,17 @@ class CategoryController extends Controller
      */
     public function index()
     {
-        $page_name = 'Categories';
-        return view('admin.categories.index', compact('page_name'));
+        // $page_name = 'Categories';
+
+        return view('admin.categories.index');
     }
 
     public function getAllCategoryData()
     {
+        $query = Category::withTrashed()
+            ->with(['user', 'user.role'])
+            ->orderBy('created_at', 'desc');
+
         $query = Category::withTrashed()
             ->with('user')
             ->orderBy('created_at', 'desc');
@@ -37,9 +42,6 @@ class CategoryController extends Controller
             ->addColumn('category_title', function (Category $category) {
                 return $category->title;
             })
-            ->addColumn('slug', function (Category $category) {
-                return $category->slug;
-            })
             ->filterColumn('type', function ($query, $keyword) {
                 $sql = "CONCAT(categories.type) like ?";
                 $query->whereRaw($sql, ["%{$keyword}%"]);
@@ -51,7 +53,9 @@ class CategoryController extends Controller
                 return ucfirst($category->type);
             })
             ->addColumn('user', function (Category $category) {
-                return $category->user->name;
+                $user = '';
+                $user = '<span>' . $category->user->name . ' <small class="font-weight-bold">(' . $category->user->role->name . ')</small></span>';
+                return $user;
             })
             ->addColumn('created_at', function (Category $category) {
                 return $category->created_at->format('d-M-y, g:i A');
@@ -69,14 +73,14 @@ class CategoryController extends Controller
                     <i class="fa fa-trash-alt"></i>
                     </button>';
                 } else {
-                    $buttons = '<button type="button" class="btn bg-gradient-danger btn-sm delete_restore_category" data-id="' . $category->id . '" data-action="restore" data-toggle="modal" data-target="#delete_restore_modal" ><i class="fa fa-history"></i>
+                    $buttons = '<button type="button" class="btn bg-gradient-danger btn-sm delete_restore_category" data-id="' . $category->id . '" data-action="restore" data-toggle="modal" data-target="#delete_restore_modal" data-toggle="tooltip" data-placement="top" title="Restore"><i class="fa fa-history"></i>
                                 </button>';
                 }
                 return $buttons;
             })
 
-            ->only(['category_title', 'slug', 'user', 'type', 'created_at', 'updated_at', 'actions'])
-            ->rawColumns(['actions'])
+            ->only(['category_title', 'user', 'type', 'created_at', 'updated_at', 'actions'])
+            ->rawColumns(['user', 'actions'])
             ->addIndexColumn()
             ->toJson();
     }
@@ -128,6 +132,7 @@ class CategoryController extends Controller
      */
     public function update(CategoryRequestValidate $request)
     {
+        // dd($request->all());
         $category = Category::findOrFail($request->category_id);
         $category['slug'] = uniqueSlug($request->title);
         $category_data = $request->except(['_token', '_method']);
@@ -145,7 +150,7 @@ class CategoryController extends Controller
     public function destroyOrRestore(Request $request)
     {
         // dd($request->all());
-        $category = Category::withTrashed()->where('id', $request->category_id)->first();
+        $category = Category::withTrashed()->where('id', $request->id)->first();
         if (is_null($category->deleted_at)) {
             $success = $category->delete();
             $message = 'Category Successfully Deleted !';

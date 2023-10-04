@@ -5,13 +5,18 @@
         <div class="col-12">
             <div class="card">
                 <div class="card-body p-2">
-                    <table id="category_table" class="table-bordered table-striped table-sm table text-center">
+                    <table id="blogs_table" class="table-bordered table-striped table-sm table text-center">
                         <thead class="bg-gradient-navy text-white">
                             <tr>
                                 <th>Sr #</th>
                                 <th>Title</th>
-                                <th>Type</th>
+                                <th>Image</th>
+                                <th>Category</th>
                                 <th>Added By</th>
+                                <th>Tags</th>
+                                {{-- <th>Description</th> --}}
+                                <th>Status</th>
+                                <th>Comments</th>
                                 <th>Created At</th>
                                 <th>Updated</th>
                                 <th>Action</th>
@@ -23,148 +28,42 @@
             </div>
         </div>
     </div>
-    <div class="modal fade" id="add_edit_category_modal" data-backdrop="static" data-keyboard="false">
+    @include('partials._delete_restore_modal')
+
+
+    {{-- <div class="modal fade" id="delete_restore_modal" data-backdrop="static" data-keyboard="false">
         <div class="modal-dialog">
             <div class="modal-content">
-                <div class="modal-header bg-gradient-navy py-2">
-                    <h5 class="modal-title font-weight-bold" id="add_edit_modal_title"></h5>
-                    <button type="button" class="close modal_close">
+                <div class="modal-header py-2" id="delete_restore_modal_heading">
+                    <h5 class="modal-title font-weight-bold"></h5>
+                    <button type="button" class="close delete_restore_close">
                         <span aria-hidden="true">&times;</span>
                     </button>
                 </div>
-                <div class="modal-body">
-                    <form class="form" role="form" id="add_update_category_form">
-                        @csrf
+                <div class="modal-body" id="delete_restore_modal_body">
+                    <h5></h5>
+                    <form class="form" id="delete_restore_form">
                         <input type="hidden" name="category_id" id="category_id">
-                        <div class="form-group">
-                            <label for="title">Category Title</label>
-                            <input type="text" name="title" class="form-control" id="title">
-                            <span class="invalid-feedback" role="alert">
-                                <strong></strong>
-                            </span>
-                        </div>
-                        <div class="form-group mb-0">
-                            <label for="title">Category Type</label><br>
-                            <div class="btn-group btn-group-toggle" data-toggle="buttons" id="toggle_btn">
-                                <label class="btn btn-outline-primary btn-sm" id="blog">
-                                    <input type="radio" name="type" autocomplete="off" value="{{ old('blog') }}">
-                                    Blog
-                                </label>
-                                <label class="btn btn-outline-primary btn-sm" id="job">
-                                    <input type="radio" name="type" autocomplete="off" value="{{ old('job') }}">
-                                    Job
-                                </label>
-                            </div>
-                            <span class="invalid-feedback" role="alert">
-                                <strong></strong>
-                            </span>
-                        </div>
                     </form>
                 </div>
                 <div class="modal-footer justify-content-between py-1">
-                    <button type="button" class="btn btn-outline-secondary btn-sm modal_close">Close</button>
-                    <button type="submit" name="submit" class="btn btn-outline-primary btn-sm"
-                        id="create_update_btn"></button>
+                    <button type="button" class="btn bg-gradient-gray-dark btn-sm delete_restore_close">Close</button>
+                    <button type="submit" name="submit" class="btn btn-sm" id="delete_restore_modal_btn"></button>
                 </div>
             </div>
         </div>
-    </div>
-
-    @include('partials._delete_restore_modal')
+    </div> --}}
 @endsection
 @push('javascript')
     <script>
         $(document).ready(function() {
-            fetchAllCategories();
+            fetchAllBlogs();
 
-            var add_edit_form = $('#add_update_category_form');
             var delete_restore_modal = $('#delete_restore_modal');
 
-            $('#add_category').on('click', function() {
-                // RELACING MODAL TITLE & BUTTON TEXT ON CREATE
-                $('#add_edit_modal_title').html('Add New Category');
-                $('#create_update_btn').html('Create');
-            });
 
-            $(document).on('click', '.edit_category', function(e) {
-                e.preventDefault();
-                var edit_btn = $(this);
-                add_edit_form.find('#category_id').val(edit_btn.data('id'));
-                add_edit_form.find('#title').val(edit_btn.data('title'));
-                if (edit_btn.data('type') == 'blog') {
-                    add_edit_form.find('#blog').children().val(edit_btn.data('type')).attr('checked', '');
-                    add_edit_form.find('#blog').addClass('active focus');
-                } else {
-                    add_edit_form.find('#job').children().val(edit_btn.data('type')).attr('checked', '');
-                    add_edit_form.find('#job').addClass('active focus');
-                }
-                $('#add_edit_modal_title').html('Edit Category');
-                $('#create_update_btn').html('Update');
-            });
-
-            $(document).on('click', '#create_update_btn', function() {
-
-                let type = 'POST';
-                let url = '';
-                let category_id = $('#category_id').val();
-                let data = new FormData(add_edit_form[0]);
-                if ($(this).text() == 'Create') {
-                    url = '{{ route('category.store') }}';
-                } else {
-                    url = '{{ route('category.update') }}';
-                    data.append('_method', 'PATCH');
-                }
-                SendAjaxRequestToServer(type, url, data, '', createUpdateCategoryResponse);
-
-                function createUpdateCategoryResponse(response) {
-                    if (response.status != 200) {
-                        add_edit_form.find('#toggle_btn').removeClass('is-invalid');
-                        add_edit_form.find('span').removeClass('d-block').html('');
-                        $.each(response.responseJSON.errors, function(key, value) {
-                            add_edit_form.find('#' + key).addClass('is-invalid');
-                            add_edit_form.find('#' + key).siblings('span').addClass('d-block').html(
-                                value[
-                                    0]);
-                            if (key == 'type') {
-                                add_edit_form.find('#toggle_btn').next('span').addClass('d-block')
-                                    .html(value[0]);
-                            }
-                        });
-                    } else {
-                        $(function() {
-                            var Toast = Swal.mixin({
-                                toast: true,
-                                position: 'top-end',
-                                showConfirmButton: false,
-                                timer: 5000
-                            });
-
-                            Toast.fire({
-                                icon: response.state,
-                                title: response.message,
-                                // background: 'gray',
-                            })
-
-                            modalFormControl();
-                            fetchAllCategories();
-                        });
-                    }
-                }
-            });
-
-            $('.modal_close').click(modalFormControl);
-
-            function modalFormControl() {
-                add_edit_form.find('.is-invalid').removeClass("is-invalid");
-                add_edit_form.find('.invalid-feedback').text('');
-                add_edit_form.trigger("reset");
-                add_edit_form.find('label').removeClass('active');
-                add_edit_form.parents('.modal').modal('hide');
-            }
-
-
-            function fetchAllCategories() {
-                $("#category_table").DataTable({
+            function fetchAllBlogs() {
+                $("#blogs_table").DataTable({
                     "pagingType": 'numbers',
                     "ordering": true,
                     'pageLength': 10,
@@ -178,7 +77,7 @@
                     "processing": true,
                     "serverSide": true,
                     "destroy": true,
-                    "ajax": "{{ route('category.getAllCategoryData') }}",
+                    "ajax": "{{ route('blogs.getAllBlogsData') }}",
                     "buttons": ["copy", "csv", "excel", "pdf", "print", "colvis"],
                     columns: [{
                             data: 'DT_RowIndex',
@@ -187,16 +86,22 @@
                             searchable: false
                         },
                         {
-                            data: 'category_title',
-                            name: 'category_title',
+                            data: 'blog_title',
+                            name: 'blog_title',
                             orderable: true,
                             searchable: true
                         },
                         {
-                            data: 'type',
-                            name: 'type',
+                            data: 'image',
+                            name: 'image',
                             orderable: true,
                             searchable: true
+                        },
+                        {
+                            data: 'category',
+                            name: 'category',
+                            orderable: false,
+                            searchable: false
                         },
                         {
                             data: 'user',
@@ -205,8 +110,26 @@
                             searchable: false
                         },
                         {
-                            data: 'created_at',
-                            name: 'created_at',
+                            data: 'tags',
+                            name: 'tags',
+                            orderable: false,
+                            searchable: false
+                        },
+                        {
+                            data: 'status',
+                            name: 'status',
+                            orderable: false,
+                            searchable: false
+                        },
+                        {
+                            data: 'comments',
+                            name: 'comments',
+                            orderable: false,
+                            searchable: false
+                        },
+                        {
+                            data: 'updated_at',
+                            name: 'updated_at',
                             orderable: false,
                             searchable: false
                         },
@@ -234,6 +157,7 @@
                 //     "responsive": true,
                 // });
             }
+
             $(document).on('click', '.delete_restore_category', function() {
                 var action_btn = $(this);
                 var delete_restore_modal_heading = delete_restore_modal.find(
@@ -265,7 +189,7 @@
             $(document).on('click', '#delete_restore_modal_btn', function(e) {
                 let dalate_restore_form = $('#delete_restore_form');
                 var action_btn = $(this);
-                var url = "{{ route('category.destroyOrRestore') }}";
+                var url = "{{ route('blog.destroyOrRestore') }}";
                 var data = new FormData(dalate_restore_form[0]);
 
                 SendAjaxRequestToServer('POST', url, data, 'json', deleteRestoreResponse);
@@ -284,10 +208,11 @@
                         Toast.fire({
                             icon: response.state,
                             title: response.message,
-                            // background: 'gray',
+                            background: 'maroon',
+                            color: 'white',
                         })
 
-                        fetchAllCategories();
+                        fetchAllBlogs();
                         deleteRestoreModalReset();
                     });
                 }
