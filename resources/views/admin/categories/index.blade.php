@@ -32,7 +32,7 @@
                         <span aria-hidden="true">&times;</span>
                     </button>
                 </div>
-                <div class="modal-body">
+                <div class="modal-body pb-0">
                     <form class="form" role="form" id="add_update_category_form">
                         @csrf
                         <input type="hidden" name="category_id" id="category_id">
@@ -43,7 +43,24 @@
                                 <strong></strong>
                             </span>
                         </div>
-                        <div class="form-group mb-0">
+                        <div class="form-group">
+                            <label for="type">Category Type</label>
+                            <br>
+                            <div class="d-flex justify-content-between" id="type">
+                                <div class="d-inline icheck-navy">
+                                    <input type="radio" name="type" id="blog" value="blog">
+                                    <label for="blog">Blog</label>
+                                </div>
+                                <div class="d-inline icheck-navy ml-auto mr-auto">
+                                    <input type="radio" name="type" id="job" value="job">
+                                    <label for="job">Job</label>
+                                </div>
+                            </div>
+                            <span class="invalid-feedback" role="alert">
+                                <strong></strong>
+                            </span>
+                        </div>
+                        {{-- <div class="form-group mb-0">
                             <label for="title">Category Type</label><br>
                             <div class="btn-group btn-group-toggle" data-toggle="buttons" id="toggle_btn">
                                 <label class="btn btn-outline-primary btn-sm" id="blog">
@@ -58,7 +75,7 @@
                             <span class="invalid-feedback" role="alert">
                                 <strong></strong>
                             </span>
-                        </div>
+                        </div> --}}
                     </form>
                 </div>
                 <div class="modal-footer justify-content-between py-1">
@@ -92,11 +109,9 @@
                 add_edit_form.find('#category_id').val(edit_btn.data('id'));
                 add_edit_form.find('#title').val(edit_btn.data('title'));
                 if (edit_btn.data('type') == 'blog') {
-                    add_edit_form.find('#blog').children().val(edit_btn.data('type')).attr('checked', '');
-                    add_edit_form.find('#blog').addClass('active focus');
+                    add_edit_form.find('#blog').val(edit_btn.data('type')).attr('checked', '');
                 } else {
-                    add_edit_form.find('#job').children().val(edit_btn.data('type')).attr('checked', '');
-                    add_edit_form.find('#job').addClass('active focus');
+                    add_edit_form.find('#job').val(edit_btn.data('type')).attr('checked', '');
                 }
                 $('#add_edit_modal_title').html('Edit Category');
                 $('#create_update_btn').html('Update');
@@ -126,7 +141,8 @@
                                 value[
                                     0]);
                             if (key == 'type') {
-                                add_edit_form.find('#toggle_btn').next('span').addClass('d-block')
+                                add_edit_form.find('#type').next('span').addClass(
+                                        'd-block')
                                     .html(value[0]);
                             }
                         });
@@ -157,6 +173,8 @@
             function modalFormControl() {
                 add_edit_form.find('.is-invalid').removeClass("is-invalid");
                 add_edit_form.find('.invalid-feedback').text('');
+                add_edit_form.find("input").removeAttr('checked');
+                add_edit_form.find("input").removeAttr('value');
                 add_edit_form.trigger("reset");
                 add_edit_form.find('label').removeClass('active');
                 add_edit_form.parents('.modal').modal('hide');
