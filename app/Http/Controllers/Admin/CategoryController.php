@@ -97,7 +97,6 @@ class CategoryController extends Controller
      */
     public function store(CategoryRequestValidate $request)
     {
-        // dd($request->all());
         $category = Category::create([
             'title' => $request->title,
             'slug' => uniqueSlug($request->title),
@@ -132,10 +131,9 @@ class CategoryController extends Controller
      */
     public function update(CategoryRequestValidate $request)
     {
-        // dd($request->all());
         $category = Category::findOrFail($request->category_id);
-        $category['slug'] = uniqueSlug($request->title);
         $category_data = $request->except(['_token', '_method']);
+        $category['slug'] = uniqueSlug($request->title);
 
         if ($category->update($category_data)) {
             return JsonResponse(200, 'success', 'Category Successfully Updated !');
@@ -149,7 +147,6 @@ class CategoryController extends Controller
      */
     public function destroyOrRestore(Request $request)
     {
-        // dd($request->all());
         $category = Category::withTrashed()->where('id', $request->id)->first();
         if (is_null($category->deleted_at)) {
             $success = $category->delete();

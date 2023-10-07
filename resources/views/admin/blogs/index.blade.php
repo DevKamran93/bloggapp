@@ -57,13 +57,14 @@
 @push('javascript')
     <script>
         $(document).ready(function() {
+            localStorage.removeItem('image');
+            var table = $("#blogs_table");
             fetchAllBlogs();
 
             var delete_restore_modal = $('#delete_restore_modal');
 
-
             function fetchAllBlogs() {
-                $("#blogs_table").DataTable({
+                table.DataTable({
                     "pagingType": 'numbers',
                     "ordering": true,
                     'pageLength': 10,
@@ -76,7 +77,6 @@
                     "autoWidth": true,
                     "processing": true,
                     "serverSide": true,
-                    "destroy": true,
                     "ajax": "{{ route('blogs.getAllBlogsData') }}",
                     "buttons": ["copy", "csv", "excel", "pdf", "print", "colvis"],
                     columns: [{
@@ -169,7 +169,7 @@
                     delete_restore_modal_heading.removeClass('bg-gradient-success').addClass(
                         'bg-gradient-danger');
                     delete_restore_modal_heading.children('h5').html('Delete ?');
-                    delete_restore_modal_body.children('h5').html('Are You Sure, You Want To Delete ?');
+                    delete_restore_modal_body.children('h6').html('Are You Sure, You Want To Delete ?');
                     delete_restore_modal_btn.removeClass('bg-gradient-success').addClass(
                         'bg-gradient-danger').text('Delete');
                     delete_restore_modal_btn.attr('data-action', action_btn.data('action'));
@@ -177,7 +177,7 @@
                     delete_restore_modal_heading.removeClass('bg-gradient-danger').addClass(
                         'bg-gradient-success');
                     delete_restore_modal_heading.children('h5').html('Restore ?');
-                    delete_restore_modal_body.children('h5').html('Are You Sure, You Want To Restore ?');
+                    delete_restore_modal_body.children('h6').html('Are You Sure, You Want To Restore ?');
                     delete_restore_modal_btn.removeClass('bg-gradient-danger').addClass(
                         'bg-gradient-success').text('Restore');
                     delete_restore_modal_btn.attr('data-action', action_btn.data('action'));
@@ -208,11 +208,12 @@
                         Toast.fire({
                             icon: response.state,
                             title: response.message,
-                            background: 'maroon',
-                            color: 'white',
+                            // background: 'maroon',
+                            // color: 'white',
                         })
+                        table.DataTable().ajax.reload();
 
-                        fetchAllBlogs();
+                        // fetchAllBlogs();
                         deleteRestoreModalReset();
                     });
                 }

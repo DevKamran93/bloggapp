@@ -12,6 +12,7 @@ use Yajra\DataTables\Facades\DataTables;
 use App\Http\Requests\BlogRequestValidate;
 use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Facades\Notification;
+use Illuminate\Support\Facades\Session;
 
 class BlogController extends Controller
 {
@@ -145,10 +146,8 @@ class BlogController extends Controller
             'status' => $request->status,
         ]);
 
-
         if ($blog) {
             connectify('success', 'Successful !', 'New Blog Successfully Added');
-            // return redirect()->back();
             return to_route('blogs');
         } else {
             if (isset($path)) {
@@ -182,7 +181,6 @@ class BlogController extends Controller
      */
     public function update(BlogRequestValidate $request)
     {
-        // dd($request->all());
         $blog = Blog::where('slug', Crypt::decrypt($request->slug))->first();
 
         if ($request->image) {
@@ -212,7 +210,6 @@ class BlogController extends Controller
      */
     public function destroyOrRestore(Request $request)
     {
-        // dd($request->all());
         $blog = Blog::withTrashed()->where('id', $request->id)->first();
         if (is_null($blog->deleted_at)) {
             $success = $blog->delete();

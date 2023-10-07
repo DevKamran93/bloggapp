@@ -24,12 +24,12 @@
         </div>
     </div>
     <div class="modal fade" id="add_edit_category_modal" data-backdrop="static" data-keyboard="false">
-        <div class="modal-dialog">
+        <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content">
                 <div class="modal-header bg-gradient-navy py-2">
-                    <h5 class="modal-title font-weight-bold" id="add_edit_modal_title"></h5>
+                    <h5 class="h5 modal-title font-weight-bold" id="add_edit_modal_title"></h5>
                     <button type="button" class="close modal_close">
-                        <span aria-hidden="true">&times;</span>
+                        <i class="bg-gradient-danger fa fa-times fa-xs rounded px-2 py-1"></i>
                     </button>
                 </div>
                 <div class="modal-body pb-0">
@@ -79,8 +79,8 @@
                     </form>
                 </div>
                 <div class="modal-footer justify-content-between py-1">
-                    <button type="button" class="btn btn-outline-secondary btn-sm modal_close">Close</button>
-                    <button type="submit" name="submit" class="btn btn-outline-primary btn-sm"
+                    <button type="button" class="bg-gradient-gray-dark btn btn-sm modal_close">Close</button>
+                    <button type="submit" name="submit" class="bg-gradient-navy btn btn-sm"
                         id="create_update_btn"></button>
                 </div>
             </div>
@@ -92,15 +92,19 @@
 @push('javascript')
     <script>
         $(document).ready(function() {
-            fetchAllCategories();
 
             var add_edit_form = $('#add_update_category_form');
             var delete_restore_modal = $('#delete_restore_modal');
+            var table = $("#category_table");
+
+            fetchAllCategories();
 
             $('#add_category').on('click', function() {
                 // RELACING MODAL TITLE & BUTTON TEXT ON CREATE
                 $('#add_edit_modal_title').html('Add New Category');
                 $('#create_update_btn').html('Create');
+                add_edit_form.find('#blog').val('blog');
+                add_edit_form.find('#job').val('job');
             });
 
             $(document).on('click', '.edit_category', function(e) {
@@ -109,9 +113,11 @@
                 add_edit_form.find('#category_id').val(edit_btn.data('id'));
                 add_edit_form.find('#title').val(edit_btn.data('title'));
                 if (edit_btn.data('type') == 'blog') {
-                    add_edit_form.find('#blog').val(edit_btn.data('type')).attr('checked', '');
+                    add_edit_form.find('#blog').val('blog').attr('checked', '');
+                    add_edit_form.find('#job').val('job');
                 } else {
-                    add_edit_form.find('#job').val(edit_btn.data('type')).attr('checked', '');
+                    add_edit_form.find('#job').val('job').attr('checked', '');
+                    add_edit_form.find('#blog').val('blog');
                 }
                 $('#add_edit_modal_title').html('Edit Category');
                 $('#create_update_btn').html('Update');
@@ -123,6 +129,7 @@
                 let url = '';
                 let category_id = $('#category_id').val();
                 let data = new FormData(add_edit_form[0]);
+                console.log(add_edit_form[0]);
                 if ($(this).text() == 'Create') {
                     url = '{{ route('category.store') }}';
                 } else {
@@ -147,6 +154,10 @@
                             }
                         });
                     } else {
+                        // table.ajax.reload();
+                        // table.datatables().ajax.reload();
+                        // var table = ;
+                        table.DataTable().ajax.reload();
                         $(function() {
                             var Toast = Swal.mixin({
                                 toast: true,
@@ -162,7 +173,7 @@
                             })
 
                             modalFormControl();
-                            fetchAllCategories();
+                            // fetchAllCategories();
                         });
                     }
                 }
@@ -173,18 +184,17 @@
             function modalFormControl() {
                 add_edit_form.find('.is-invalid').removeClass("is-invalid");
                 add_edit_form.find('.invalid-feedback').text('');
-                add_edit_form.find("input").removeAttr('checked');
-                add_edit_form.find("input").removeAttr('value');
-                add_edit_form.trigger("reset");
+                add_edit_form.find("input").removeAttr('checked value');
+                add_edit_form.trigger('reset');
                 add_edit_form.find('label').removeClass('active');
                 add_edit_form.parents('.modal').modal('hide');
             }
 
-
             function fetchAllCategories() {
-                $("#category_table").DataTable({
+                table.DataTable({
                     "pagingType": 'numbers',
-                    "ordering": true,
+                    // "ordering": true,
+                    "orderable": true,
                     'pageLength': 10,
                     "lengthMenu": [
                         [10, 15, 20, 25, 50, -1],
@@ -195,7 +205,6 @@
                     "autoWidth": true,
                     "processing": true,
                     "serverSide": true,
-                    "destroy": true,
                     "ajax": "{{ route('category.getAllCategoryData') }}",
                     "buttons": ["copy", "csv", "excel", "pdf", "print", "colvis"],
                     columns: [{
@@ -242,15 +251,6 @@
                         },
                     ]
                 }).buttons().container().appendTo('#example1_wrapper .col-md-6:eq(0)');
-                // $('#example2').DataTable({
-                //     "paging": true,
-                //     "lengthChange": false,
-                //     "searching": false,
-                //     "ordering": true,
-                //     "info": true,
-                //     "autoWidth": false,
-                //     "responsive": true,
-                // });
             }
             $(document).on('click', '.delete_restore_category', function() {
                 var action_btn = $(this);
@@ -263,7 +263,7 @@
                     delete_restore_modal_heading.removeClass('bg-gradient-success').addClass(
                         'bg-gradient-danger');
                     delete_restore_modal_heading.children('h5').html('Delete ?');
-                    delete_restore_modal_body.children('h5').html('Are You Sure, You Want To Delete ?');
+                    delete_restore_modal_body.children('h6').html('Are You Sure, You Want To Delete ?');
                     delete_restore_modal_btn.removeClass('bg-gradient-success').addClass(
                         'bg-gradient-danger').text('Delete');
                     delete_restore_modal_btn.attr('data-action', action_btn.data('action'));
@@ -271,7 +271,7 @@
                     delete_restore_modal_heading.removeClass('bg-gradient-danger').addClass(
                         'bg-gradient-success');
                     delete_restore_modal_heading.children('h5').html('Restore ?');
-                    delete_restore_modal_body.children('h5').html('Are You Sure, You Want To Restore ?');
+                    delete_restore_modal_body.children('h6').html('Are You Sure, You Want To Restore ?');
                     delete_restore_modal_btn.removeClass('bg-gradient-danger').addClass(
                         'bg-gradient-success').text('Restore');
                     delete_restore_modal_btn.attr('data-action', action_btn.data('action'));
@@ -291,6 +291,7 @@
 
             function deleteRestoreResponse(response) {
                 if (response.status == 200) {
+                    table.DataTable().ajax.reload();
                     $(function() {
                         var Toast = Swal.mixin({
                             toast: true,
@@ -305,7 +306,7 @@
                             // background: 'gray',
                         })
 
-                        fetchAllCategories();
+                        // fetchAllCategories();
                         deleteRestoreModalReset();
                     });
                 }

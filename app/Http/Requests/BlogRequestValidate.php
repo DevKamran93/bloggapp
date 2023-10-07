@@ -41,7 +41,6 @@ class BlogRequestValidate extends FormRequest
             $rules['image'] = 'nullable|mimes:png,jpg,jpeg';
         } else {
             // Creating a new blog, so image is required
-            dd('second');
             $rules['image'] = 'required|mimes:png,jpg,jpeg';
         }
         // dd($rules, $blog);

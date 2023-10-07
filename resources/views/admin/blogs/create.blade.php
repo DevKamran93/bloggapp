@@ -38,8 +38,10 @@
                                 </div>
                             </div>
                             <div class="col-2">
+                                {{-- @dd() --}}
                                 <div>
-                                    <img alt="Blog Image" class="img-responsive img-fluid" id="blog_image_preview">
+                                    <img src="{{ url('storage/images/blogs/dummy.png') }}" alt="Blog Image"
+                                        class="img-responsive img-fluid" id="blog_image_preview">
                                 </div>
                             </div>
                             <div class="col-3">
@@ -211,23 +213,63 @@
 @push('javascript')
     <script>
         $(document).ready(function() {
-            function readURL(input) {
-                if (input.files && input.files[0]) {
-                    var reader = new FileReader();
-                    reader.onload = function(e) {
-                        $('#blog_image_preview').attr('src', e.target.result);
-                    }
-
-                    reader.readAsDataURL(input.files[0]);
-
-                }
+            var image = localStorage.getItem('image');
+            if (image) {
+                $('#blog_image_preview').attr('src', image);
             }
+            var _URL = window.URL || window.webkitURL;
+            $("#blog_image").change(function(e) {
+                var file, img;
+                if ((file = this.files[0])) {
+                    img = new Image();
+                    var objectUrl = _URL.createObjectURL(file);
+                    img.onload = function() {
+                        // alert( + " " + );
+                        // if (this.width == 1200 && this.height == 630) {
+                        $('#blog_image_preview').attr('src', objectUrl);
+                        localStorage.setItem("image", objectUrl)
+                        // } else {
+                        //     $(function() {
+                        //         var Toast = Swal.mixin({
+                        //             toast: true,
+                        //             position: 'top-end',
+                        //             showConfirmButton: false,
+                        //             timer: 10000
+                        //         });
 
-            $('#blog_image').change(function() {
-                // e.preventDefault();
-                readURL(this);
-
+                        //         Toast.fire({
+                        //             icon: 'error',
+                        //             title: 'Image Diamension Should be 1200 x 630',
+                        //             // background: 'gray',
+                        //         })
+                        //         $('#blog_image').val('');
+                        //     });
+                        //     _URL.revokeObjectURL(objectUrl);
+                        // }
+                    };
+                    img.src = objectUrl;
+                }
             });
+            // function readURL(input) {
+            //     if (input.files && input.files[0]) {
+            //         var reader = new FileReader();
+            //         reader.onload = function(e) {
+            //             let image_width = this.width;
+            //             let image_height = this.height;
+            //             alert(image_height, image_width);
+            //             $('#blog_image_preview').attr('src', e.target.result);
+            //             // console.log(e.target.result);
+            //             localStorage.setItem("image", e.target.result)
+            //         }
+            //         reader.readAsDataURL(input.files[0]);
+            //     }
+            // }
+
+            // $('#blog_image').change(function() {
+            //     // e.preventDefault();
+            //     readURL(this);
+
+            // });
         });
         // $(document).ready(function() {
         //     fetchAllCategories();
