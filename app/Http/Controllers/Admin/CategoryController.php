@@ -69,11 +69,11 @@ class CategoryController extends Controller
                     $buttons = '<button type="button" class="btn bg-gradient-navy btn-sm edit_category" id="edit_category" data-id="' . $category->id . '" data-title="' . $category->title . '" data-type="' . $category->type . '" data-toggle="modal" data-target="#add_edit_category_modal">
                     <i class="fa fa-pen-alt"></i>
                     </button>
-                    <button type="button" class="btn bg-gradient-danger btn-sm delete_restore_category" data-id="' . $category->id . '" data-action="delete"  data-toggle="modal" data-target="#delete_restore_modal" >
+                    <button type="button" class="btn bg-gradient-danger btn-sm delete_restore_category" data-id="' . $category->id . '"  data-route="category.destroyOrRestore" data-action="delete"  data-toggle="modal" data-target="#delete_restore_modal" >
                     <i class="fa fa-trash-alt"></i>
                     </button>';
                 } else {
-                    $buttons = '<button type="button" class="btn bg-gradient-danger btn-sm delete_restore_category" data-id="' . $category->id . '" data-action="restore" data-toggle="modal" data-target="#delete_restore_modal" data-toggle="tooltip" data-placement="top" title="Restore"><i class="fa fa-history"></i>
+                    $buttons = '<button type="button" class="btn bg-gradient-danger btn-sm delete_restore_category" data-id="' . $category->id . '" data-route="category.destroyOrRestore" data-action="restore" data-toggle="modal" data-target="#delete_restore_modal" data-toggle="tooltip" data-placement="top" title="Restore"><i class="fa fa-history"></i>
                                 </button>';
                 }
                 return $buttons;

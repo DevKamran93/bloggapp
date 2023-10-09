@@ -154,9 +154,6 @@
                             }
                         });
                     } else {
-                        // table.ajax.reload();
-                        // table.datatables().ajax.reload();
-                        // var table = ;
                         table.DataTable().ajax.reload();
                         $(function() {
                             var Toast = Swal.mixin({

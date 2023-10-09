@@ -29,7 +29,7 @@
                                     <label for="title" class="form-label">Image</label>
                                     <input type="file" name="image"
                                         class="form-control @error('image') is-invalid @enderror" id="blog_image"
-                                        value="{{ old('image') }}">
+                                        value="{{ old('image') }}" accept="image/png, image/jpg, image/jpeg">
                                     @error('image')
                                         <span class="invalid-feedback" role="alert">
                                             <strong>{{ $message }}</strong>
@@ -38,9 +38,9 @@
                                 </div>
                             </div>
                             <div class="col-2">
-                                {{-- @dd() --}}
                                 <div>
-                                    <img src="{{ url('storage/images/blogs/dummy.png') }}" alt="Blog Image"
+                                    <img src="{{ url('storage/images/blogs/dummy.png') }}"
+                                        data-old-src="{{ url('storage/images/blogs/dummy.png') }}" alt="Blog Image"
                                         class="img-responsive img-fluid" id="blog_image_preview">
                                 </div>
                             </div>
@@ -111,7 +111,7 @@
                             <div class="col-12">
                                 <div class="form-group">
                                     <label for="description">Description</label>
-                                    <textarea id="summernote" name="description" class="@error('description') is-invalid @enderror"></textarea>
+                                    <textarea id="summernote_editor" name="description" class="@error('description') is-invalid @enderror"></textarea>
                                     @error('description')
                                         <span class="invalid-feedback" role="alert">
                                             <strong>{{ $message }}</strong>
@@ -138,370 +138,246 @@
             {{ session()->get('error') }}
         </div>
     @endif
-    {{-- <div class="modal fade" id="add_edit_category_modal" data-backdrop="static" data-keyboard="false">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header bg-gradient-navy py-2">
-                    <h5 class="modal-title font-weight-bold" id="add_edit_modal_title"></h5>
-                    <button type="button" class="close modal_close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
-                </div>
-                <div class="modal-body">
-                    <form class="form" role="form" id="add_update_category_form">
-                        @csrf
-                        <input type="hidden" name="category_id" id="category_id">
-                        <div class="form-group">
-                            <label for="title">Category Title</label>
-                            <input type="text" name="title" class="form-control" id="title">
-                            <span class="invalid-feedback" role="alert">
-                                <strong></strong>
-                            </span>
-                        </div>
-                        <div class="form-group mb-0">
-                            <label for="title">Category Type</label><br>
-                            <div class="btn-group btn-group-toggle" data-toggle="buttons" id="toggle_btn">
-                                <label class="btn btn-outline-primary btn-sm" id="blog">
-                                    <input type="radio" name="type" autocomplete="off"
-                                        value="{{ old('blog') ? old('blog') : 'blog' }}">
-                                    Blog
-                                </label>
-                                <label class="btn btn-outline-primary btn-sm" id="job">
-                                    <input type="radio" name="type" autocomplete="off"
-                                        value="{{ old('job') ? old('job') : 'job' }}">
-                                    Job
-                                </label>
-                            </div>
-                            <span class="invalid-feedback" role="alert">
-                                <strong></strong>
-                            </span>
-                        </div>
-                    </form>
-                </div>
-                <div class="modal-footer justify-content-between py-1">
-                    <button type="button" class="btn btn-outline-secondary btn-sm modal_close">Close</button>
-                    <button type="submit" name="submit" class="btn btn-outline-primary btn-sm"
-                        id="create_update_btn"></button>
-                </div>
-            </div>
-        </div>
-    </div> --}}
-    {{--
-    <div class="modal fade" id="delete_restore_modal" data-backdrop="static" data-keyboard="false">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header py-2" id="delete_restore_modal_heading">
-                    <h5 class="modal-title font-weight-bold"></h5>
-                    <button type="button" class="close delete_restore_close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
-                </div>
-                <div class="modal-body" id="delete_restore_modal_body">
-                    <h5></h5>
-                    <form class="form" id="delete_restore_form">
-                        <input type="hidden" name="category_id" id="category_id">
-                    </form>
-                </div>
-                <div class="modal-footer justify-content-between py-1">
-                    <button type="button" class="btn bg-gradient-gray-dark btn-sm delete_restore_close">Close</button>
-                    <button type="submit" name="submit" class="btn btn-sm" id="delete_restore_modal_btn"></button>
-                </div>
-            </div>
-        </div>
-    </div> --}}
 @endsection
 @push('javascript')
     <script>
-        $(document).ready(function() {
-            var image = localStorage.getItem('image');
-            if (image) {
-                $('#blog_image_preview').attr('src', image);
-            }
-            var _URL = window.URL || window.webkitURL;
-            $("#blog_image").change(function(e) {
-                var file, img;
-                if ((file = this.files[0])) {
-                    img = new Image();
-                    var objectUrl = _URL.createObjectURL(file);
-                    img.onload = function() {
-                        // alert( + " " + );
-                        // if (this.width == 1200 && this.height == 630) {
-                        $('#blog_image_preview').attr('src', objectUrl);
-                        localStorage.setItem("image", objectUrl)
-                        // } else {
-                        //     $(function() {
-                        //         var Toast = Swal.mixin({
-                        //             toast: true,
-                        //             position: 'top-end',
-                        //             showConfirmButton: false,
-                        //             timer: 10000
-                        //         });
-
-                        //         Toast.fire({
-                        //             icon: 'error',
-                        //             title: 'Image Diamension Should be 1200 x 630',
-                        //             // background: 'gray',
-                        //         })
-                        //         $('#blog_image').val('');
-                        //     });
-                        //     _URL.revokeObjectURL(objectUrl);
-                        // }
-                    };
-                    img.src = objectUrl;
-                }
-            });
-            // function readURL(input) {
-            //     if (input.files && input.files[0]) {
-            //         var reader = new FileReader();
-            //         reader.onload = function(e) {
-            //             let image_width = this.width;
-            //             let image_height = this.height;
-            //             alert(image_height, image_width);
-            //             $('#blog_image_preview').attr('src', e.target.result);
-            //             // console.log(e.target.result);
-            //             localStorage.setItem("image", e.target.result)
-            //         }
-            //         reader.readAsDataURL(input.files[0]);
-            //     }
-            // }
-
-            // $('#blog_image').change(function() {
-            //     // e.preventDefault();
-            //     readURL(this);
-
-            // });
-        });
         // $(document).ready(function() {
-        //     fetchAllCategories();
-
-        //     var add_edit_form = $('#add_update_category_form');
-        //     var delete_restore_modal = $('#delete_restore_modal');
-
-        //     $('#add_category').on('click', function() {
-        //         // RELACING MODAL TITLE & BUTTON TEXT ON CREATE
-        //         $('#add_edit_modal_title').html('Add New Category');
-        //         $('#create_update_btn').html('Create');
-        //     });
-
-        //     $(document).on('click', '.edit_category', function(e) {
-        //         e.preventDefault();
-        //         var edit_btn = $(this);
-        //         add_edit_form.find('#category_id').val(edit_btn.data('id'));
-        //         add_edit_form.find('#title').val(edit_btn.data('title'));
-        //         if (edit_btn.data('type') == 'blog') {
-        //             add_edit_form.find('#blog').children().val(edit_btn.data('type')).attr('checked', '');
-        //             add_edit_form.find('#blog').addClass('active focus');
-        //         } else {
-        //             add_edit_form.find('#job').children().val(edit_btn.data('type')).attr('checked', '');
-        //             add_edit_form.find('#job').addClass('active focus');
-        //         }
-        //         $('#add_edit_modal_title').html('Edit Category');
-        //         $('#create_update_btn').html('Update');
-        //     });
-
-        //     $(document).on('click', '#create_update_btn', function() {
-
-        //         let type = 'POST';
-        //         let url = '';
-        //         let category_id = $('#category_id').val();
-        //         let data = new FormData(add_edit_form[0]);
-        //         if ($(this).text() == 'Create') {
-        //             url = '{{ route('category.store') }}';
-        //         } else {
-        //             url = '{{ route('category.update') }}';
-        //             data.append('_method', 'PATCH');
-        //         }
-        //         SendAjaxRequestToServer(type, url, data, '', createUpdateCategoryResponse);
-
-        //         function createUpdateCategoryResponse(response) {
-        //             if (response.status != 200) {
-        //                 add_edit_form.find('#toggle_btn').removeClass('is-invalid');
-        //                 add_edit_form.find('span').removeClass('d-block').html('');
-        //                 $.each(response.responseJSON.errors, function(key, value) {
-        //                     add_edit_form.find('#' + key).addClass('is-invalid');
-        //                     add_edit_form.find('#' + key).siblings('span').addClass('d-block').html(
-        //                         value[
-        //                             0]);
-        //                     if (key == 'type') {
-        //                         add_edit_form.find('#toggle_btn').next('span').addClass('d-block')
-        //                             .html(value[0]);
-        //                     }
-        //                 });
-        //             } else {
-        //                 $(function() {
-        //                     var Toast = Swal.mixin({
-        //                         toast: true,
-        //                         position: 'top-end',
-        //                         showConfirmButton: false,
-        //                         timer: 5000
-        //                     });
-
-        //                     Toast.fire({
-        //                         icon: response.state,
-        //                         title: response.message,
-        //                         // background: 'gray',
-        //                     })
-
-        //                     modalFormControl();
-        //                     fetchAllCategories();
-        //                 });
-        //             }
-        //         }
-        //     });
-
-        //     $('.modal_close').click(modalFormControl);
-
-        //     function modalFormControl() {
-        //         add_edit_form.find('.is-invalid').removeClass("is-invalid");
-        //         add_edit_form.find('.invalid-feedback').text('');
-        //         add_edit_form.trigger("reset");
-        //         add_edit_form.find('label').removeClass('active');
-        //         add_edit_form.parents('.modal').modal('hide');
+        //     var image = localStorage.getItem("image");
+        //     if (image) {
+        //         $("#blog_image_preview").attr("src", image);
         //     }
-
-
-        //     function fetchAllCategories() {
-        //         $("#category_table").DataTable({
-        //             "pagingType": 'numbers',
-        //             "ordering": true,
-        //             'pageLength': 10,
-        //             "lengthMenu": [
-        //                 [10, 15, 20, 25, 50, -1],
-        //                 [10, 15, 20, 25, 50, 'All'],
-        //             ],
-        //             "responsive": true,
-        //             "lengthChange": true,
-        //             "autoWidth": true,
-        //             "processing": true,
-        //             "serverSide": true,
-        //             "destroy": true,
-        //             "ajax": "{{ route('category.getAllCategoryData') }}",
-        //             "buttons": ["copy", "csv", "excel", "pdf", "print", "colvis"],
-        //             columns: [{
-        //                     data: 'DT_RowIndex',
-        //                     name: 'DT_RowIndex',
-        //                     orderable: false,
-        //                     searchable: false
-        //                 },
-        //                 {
-        //                     data: 'category_title',
-        //                     name: 'category_title',
-        //                     orderable: true,
-        //                     searchable: true
-        //                 },
-        //                 {
-        //                     data: 'type',
-        //                     name: 'type',
-        //                     orderable: true,
-        //                     searchable: true
-        //                 },
-        //                 {
-        //                     data: 'user',
-        //                     name: 'user',
-        //                     orderable: false,
-        //                     searchable: false
-        //                 },
-        //                 {
-        //                     data: 'created_at',
-        //                     name: 'created_at',
-        //                     orderable: false,
-        //                     searchable: false
-        //                 },
-        //                 {
-        //                     data: 'updated_at',
-        //                     name: 'updated_at',
-        //                     orderable: false,
-        //                     searchable: false
-        //                 },
-        //                 {
-        //                     data: 'actions',
-        //                     name: 'actions',
-        //                     orderable: false,
-        //                     searchable: false
-        //                 },
-        //             ]
-        //         }).buttons().container().appendTo('#example1_wrapper .col-md-6:eq(0)');
-        //         // $('#example2').DataTable({
-        //         //     "paging": true,
-        //         //     "lengthChange": false,
-        //         //     "searching": false,
-        //         //     "ordering": true,
-        //         //     "info": true,
-        //         //     "autoWidth": false,
-        //         //     "responsive": true,
-        //         // });
-        //     }
-        //     $(document).on('click', '.delete_restore_category', function() {
-        //         var action_btn = $(this);
-        //         var delete_restore_modal_heading = delete_restore_modal.find(
-        //             '#delete_restore_modal_heading');
-        //         var delete_restore_modal_btn = delete_restore_modal.find('#delete_restore_modal_btn');
-        //         var delete_restore_modal_body = delete_restore_modal.find('#delete_restore_modal_body');
-
-        //         if (action_btn.data('action') == 'delete') {
-        //             delete_restore_modal_heading.removeClass('bg-gradient-success').addClass(
-        //                 'bg-gradient-danger');
-        //             delete_restore_modal_heading.children('h5').html('Delete ?');
-        //             delete_restore_modal_body.children('h5').html('Are You Sure, You Want To Delete ?');
-        //             delete_restore_modal_btn.removeClass('bg-gradient-success').addClass(
-        //                 'bg-gradient-danger').text('Delete');
-        //             delete_restore_modal_btn.attr('data-action', action_btn.data('action'));
-        //         } else {
-        //             delete_restore_modal_heading.removeClass('bg-gradient-danger').addClass(
-        //                 'bg-gradient-success');
-        //             delete_restore_modal_heading.children('h5').html('Restore ?');
-        //             delete_restore_modal_body.children('h5').html('Are You Sure, You Want To Restore ?');
-        //             delete_restore_modal_btn.removeClass('bg-gradient-danger').addClass(
-        //                 'bg-gradient-success').text('Restore');
-        //             delete_restore_modal_btn.attr('data-action', action_btn.data('action'));
+        //     var _URL = window.URL || window.webkitURL;
+        //     $("#blog_image").change(function(e) {
+        //         var file, img;
+        //         if ((file = this.files[0])) {
+        //             img = new FileReader();
+        //             var objectUrl = _URL.createObjectURL(file);
+        //             img.onload = function() {
+        //                 // if (this.width == 1200 && this.height == 630) {
+        //                 $("#blog_image_preview").attr("src", objectUrl);
+        //                 localStorage.setItem("image", objectUrl);
+        //                 // } else {
+        //                 //     $(function() {
+        //                 //         var Toast = Swal.mixin({
+        //                 //             toast: true,
+        //                 //             position: 'top-end',
+        //                 //             showConfirmButton: false,
+        //                 //             timer: 10000
+        //                 //         });
+        //                 //         Toast.fire({
+        //                 //             icon: 'error',
+        //                 //             title: 'Image Diamension Should be 1200 x 630',
+        //                 //             // background: 'gray',
+        //                 //         })
+        //                 //         $('#blog_image').val('');
+        //                 //     });
+        //                 //     _URL.revokeObjectURL(objectUrl);
+        //                 // }
+        //             };
+        //             img.src = objectUrl;
         //         }
-
-        //         delete_restore_modal.find('#delete_restore_form #category_id').val(action_btn.data('id'));
         //     });
-
-        //     $(document).on('click', '#delete_restore_modal_btn', function(e) {
-        //         let dalate_restore_form = $('#delete_restore_form');
-        //         var action_btn = $(this);
-        //         var url = "{{ route('category.destroyOrRestore') }}";
-        //         var data = new FormData(dalate_restore_form[0]);
-
-        //         SendAjaxRequestToServer('POST', url, data, 'json', deleteRestoreCategoryResponse);
-        //     });
-
-        //     function deleteRestoreCategoryResponse(response) {
-        //         if (response.status == 200) {
-        //             $(function() {
-        //                 var Toast = Swal.mixin({
-        //                     toast: true,
-        //                     position: 'top-end',
-        //                     showConfirmButton: false,
-        //                     timer: 5000
-        //                 });
-
-        //                 Toast.fire({
-        //                     icon: response.state,
-        //                     title: response.message,
-        //                     // background: 'gray',
-        //                 })
-
-        //                 fetchAllCategories();
-        //                 deleteRestoreModalReset();
-        //             });
-        //         }
-        //     }
-
-        //     $('.delete_restore_close').click(deleteRestoreModalReset);
-
-        //     function deleteRestoreModalReset() {
-        //         delete_restore_modal.find('#delete_restore_form #category_id').removeAttr('value');
-        //         delete_restore_modal.find('#delete_restore_modal_btn').removeAttr(
-        //             "data-action");
-        //         delete_restore_modal.find('#delete_restore_modal_heading').removeClass(
-        //             'bg-gradient-success, bg-gradient-danger');
-        //         delete_restore_modal.find('#delete_restore_modal_btn').removeClass(
-        //             'bg-gradient-success, bg-gradient-danger');
-        //         delete_restore_modal.modal('hide');
-        //     }
         // });
+        // var image = localStorage.getItem("image");
+        // if (image) {
+        //     $("#blog_image_preview").attr("src", image);
+        // }
+
+        // function readAndValidateImage(input) {
+        //     var old_image = $('#blog_image_preview').attr('src');
+        //     // console.log();
+        //     var file = input.files[0];
+
+        //     if (!file) {
+        //         return;
+        //     }
+
+        //     var reader = new FileReader();
+
+        //     reader.onload = function(e) {
+        //         var img = new Image();
+        //         img.src = e.target.result;
+
+        //         img.onload = function() {
+        //             if (file.type.startsWith('image/') && img.width === 1200 && img.height === 630) {
+        //                 $('#blog_image_preview').attr('src', e.target.result);
+        //                 localStorage.setItem("image", e.target.result);
+        //             } else {
+        //                 $('#blog_image_preview').attr('src', old_image);
+        //                 if (!file.type || !file.type.startsWith('image/')) {
+        //                     $(function() {
+        //                         var Toast = Swal.mixin({
+        //                             toast: true,
+        //                             position: 'top-end',
+        //                             showConfirmButton: false,
+        //                             timer: 10000
+        //                         });
+
+        //                         Toast.fire({
+        //                             icon: 'error',
+        //                             title: 'Please select a valid image file.',
+        //                             // background: 'gray',
+        //                         })
+        //                         $('#blog_image').val('');
+        //                     });
+        //                 } else {
+        //                     $(function() {
+        //                         var Toast = Swal.mixin({
+        //                             toast: true,
+        //                             position: 'top-end',
+        //                             showConfirmButton: false,
+        //                             timer: 10000
+        //                         });
+
+        //                         Toast.fire({
+        //                             icon: 'error',
+        //                             title: 'Image Diamension Should be 1200 x 630',
+        //                             // background: 'gray',
+        //                         })
+        //                         $('#blog_image').val('');
+        //                     });
+        //                 }
+        //                 $('#blog_image').val(''); // Reset the file input field
+        //                 localStorage.removeItem('image');
+
+        //             }
+        //         };
+        //     };
+
+        //     reader.readAsDataURL(file);
+        // }
+
+        // $(document).ready(function() {
+        //     function readAndValidateImage(input) {
+        //         var file = input.files[0];
+
+        //         if (!file) {
+        //             return;
+        //         }
+
+        //         var reader = new FileReader();
+
+        //         reader.onload = function(e) {
+        //             var img = new Image();
+        //             img.src = e.target.result;
+
+        //             img.onload = function() {
+        //                 console.log(file.type.startsWith('image/'), img.width, img.height, img.src, e.target
+        //                     .result);
+        //                 if (file.type.startsWith('image/') && img.width == 1200 && img.height == 630) {
+        //                     console.log('if');
+        //                     $('#blog_image_preview').attr('src', e.target.result);
+        //                     localStorage.setItem("image", e.target.result);
+        //                     return false;
+        //                 } else {
+
+        //                     var old_image = $('#blog_image_preview').data('old-src');
+        //                     $('#blog_image_preview').attr('src', old_image);
+        //                     localStorage.removeItem("image");
+        //                     console.log(old_image);
+        //                     $('#blog_image').val('');
+        //                     if (!file.type || !file.type.startsWith('image/')) {
+        //                         console.log('in else if');
+
+        //                         $(function() {
+        //                             var Toast = Swal.mixin({
+        //                                 toast: true,
+        //                                 position: 'top-end',
+        //                                 showConfirmButton: false,
+        //                                 timer: 10000
+        //                             });
+
+        //                             Toast.fire({
+        //                                 icon: 'error',
+        //                                 title: 'Please select a valid image file.',
+        //                                 // background: 'gray',
+        //                             })
+        //                             $('#blog_image').val('');
+        //                         });
+        //                     } else {
+        //                         console.log('in else else');
+
+        //                         $(function() {
+        //                             var Toast = Swal.mixin({
+        //                                 toast: true,
+        //                                 position: 'top-end',
+        //                                 showConfirmButton: false,
+        //                                 timer: 10000
+        //                             });
+
+        //                             Toast.fire({
+        //                                 icon: 'error',
+        //                                 title: 'Image Diamension Should be 1200 x 630',
+        //                                 // background: 'gray',
+        //                             })
+        //                             $('#blog_image').val('');
+        //                         });
+        //                     }
+        //                 }
+        //             };
+        //         };
+
+        //         reader.readAsDataURL(file);
+        //     }
+
+        //     $('#blog_image').change(function() {
+        //         readAndValidateImage(this);
+        //     });
+        // });
+        $(document).ready(function() {
+            function readAndValidateImage(input) {
+                var file = input.files[0];
+
+                if (!file) {
+                    return;
+                }
+
+                var reader = new FileReader();
+
+                reader.onload = function(e) {
+                    var img = new Image();
+                    img.src = e.target.result;
+                    console.log(e.target.result, file.type.startsWith('image/'));
+                    img.onload = function() {
+                        if (img.width == 1200 && img.height == 630) {
+                            $('#blog_image_preview').attr('src', e.target.result);
+                            // Store image in local storage (optional)
+                            localStorage.setItem("image", e.target.result);
+                        } else {
+                            var old_image = $('#blog_image_preview').data('old-src');
+                            $('#blog_image_preview').attr('src', old_image);
+                            $('#blog_image').val('');
+                            localStorage.removeItem("image");
+                            if (!file.type || !file.type.startsWith('image/')) {
+                                displayError('Please Select an Image File !');
+                            } else {
+                                displayError('Image dimensions should be 1200 x 630');
+                            }
+                        }
+                    };
+                };
+
+                reader.readAsDataURL(file);
+            }
+
+            function displayError(message) {
+                var Toast = Swal.mixin({
+                    toast: true,
+                    position: 'top-end',
+                    showConfirmButton: false,
+                    timer: 10000
+                });
+
+                Toast.fire({
+                    icon: 'error',
+                    title: message
+                });
+            }
+
+            $('#blog_image').change(function() {
+                readAndValidateImage(this);
+            });
+        });
     </script>
+    {{-- <script src="{{ asset('assets/dist/js/common.js') }}"></script> --}}
 @endpush

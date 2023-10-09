@@ -56,7 +56,7 @@
 @endsection
 @push('javascript')
     <script>
-        $(document).ready(function() {
+        $(function() {
             localStorage.removeItem('image');
             var table = $("#blogs_table");
             fetchAllBlogs();
@@ -197,25 +197,23 @@
 
             function deleteRestoreResponse(response) {
                 if (response.status == 200) {
-                    $(function() {
-                        var Toast = Swal.mixin({
-                            toast: true,
-                            position: 'top-end',
-                            showConfirmButton: false,
-                            timer: 5000
-                        });
-
-                        Toast.fire({
-                            icon: response.state,
-                            title: response.message,
-                            // background: 'maroon',
-                            // color: 'white',
-                        })
-                        table.DataTable().ajax.reload();
-
-                        // fetchAllBlogs();
-                        deleteRestoreModalReset();
+                    var Toast = Swal.mixin({
+                        toast: true,
+                        position: 'top-end',
+                        showConfirmButton: false,
+                        timer: 5000
                     });
+
+                    Toast.fire({
+                        icon: response.state,
+                        title: response.message,
+                        // background: 'maroon',
+                        // color: 'white',
+                    })
+                    table.DataTable().ajax.reload();
+
+                    // fetchAllBlogs();
+                    deleteRestoreModalReset();
                 }
             }
 

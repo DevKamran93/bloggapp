@@ -28,14 +28,10 @@
 
     <link rel="stylesheet"
         href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700&amp;display=fallback">
-
     {{-- <link rel="stylesheet" href="plugins/fontawesome-free/css/all.min.css"> --}}
     <link rel="stylesheet" href="{{ asset('assets/plugins/fontawesome-free/css/all.min.css') }}">
-
     <link rel="stylesheet" href="{{ asset('assets/dist/icons/ionicons.min.css') }}">
-
     {{-- <link rel="stylesheet" href="plugins/tempusdominus-bootstrap-4/css/tempusdominus-bootstrap-4.min.css"> --}}
-
     <link rel="stylesheet"
         href="{{ asset('assets/plugins/tempusdominus-bootstrap-4/css/tempusdominus-bootstrap-4.min.css') }}">
     <link rel="stylesheet" href="{{ asset('assets/plugins/icheck-bootstrap/icheck-bootstrap.min.css') }}">
@@ -1034,12 +1030,15 @@
     <script src="dist/js/demo.js"></script>
 
     <script src="{{ asset('assets/dist/js/pages/dashboard.js') }}"></script>
+    <script src="{{ asset('assets/dist/js/common.js') }}"></script>
     <script>
         $(document).ready(function() {
             // SummerNote Editor
-            $('#summernote').summernote({
+            var customFontFam = ['Ink Free'];
+            $('#summernote_editor').summernote({
                 height: 400,
-                // focus: true
+                fontNames: customFontFam,
+
             });
 
             $('[data-toggle="tooltip"]').tooltip();
