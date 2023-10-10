@@ -1,7 +1,6 @@
 @extends('layouts.app')
 @section('content')
     <div class="row">
-
         <div class="col-12">
             <div class="card">
                 <div class="card-body p-2">
@@ -17,7 +16,6 @@
                                 <th>Action</th>
                             </tr>
                         </thead>
-
                     </table>
                 </div>
             </div>
@@ -155,22 +153,26 @@
                         });
                     } else {
                         table.DataTable().ajax.reload();
+                        modalFormControl();
+
                         $(function() {
                             var Toast = Swal.mixin({
                                 toast: true,
-                                position: 'top-end',
+                                position: 'top-right',
+                                iconColor: 'white',
+                                padding: '1em',
+                                customClass: {
+                                    popup: 'colored-toast',
+                                },
                                 showConfirmButton: false,
-                                timer: 5000
+                                timer: 4000,
+                                timerProgressBar: true
                             });
 
                             Toast.fire({
                                 icon: response.state,
                                 title: response.message,
-                                // background: 'gray',
                             })
-
-                            modalFormControl();
-                            // fetchAllCategories();
                         });
                     }
                 }
@@ -249,6 +251,8 @@
                     ]
                 }).buttons().container().appendTo('#example1_wrapper .col-md-6:eq(0)');
             }
+
+
             $(document).on('click', '.delete_restore_category', function() {
                 var action_btn = $(this);
                 var delete_restore_modal_heading = delete_restore_modal.find(
@@ -287,24 +291,32 @@
             });
 
             function deleteRestoreResponse(response) {
+                var Toast = Swal.mixin({
+                    toast: true,
+                    position: 'top-right',
+                    iconColor: 'white',
+                    padding: '1em',
+                    customClass: {
+                        popup: 'colored-toast',
+                    },
+                    showConfirmButton: false,
+                    timer: 4000,
+                    timerProgressBar: true
+                });
+
+
                 if (response.status == 200) {
                     table.DataTable().ajax.reload();
-                    $(function() {
-                        var Toast = Swal.mixin({
-                            toast: true,
-                            position: 'top-end',
-                            showConfirmButton: false,
-                            timer: 5000
-                        });
+                    deleteRestoreModalReset();
 
-                        Toast.fire({
-                            icon: response.state,
-                            title: response.message,
-                            // background: 'gray',
-                        })
-
-                        // fetchAllCategories();
-                        deleteRestoreModalReset();
+                    Toast.fire({
+                        icon: response.state,
+                        title: response.message,
+                    });
+                } else {
+                    Toast.fire({
+                        icon: response.state,
+                        title: response.message,
                     });
                 }
             }

@@ -196,24 +196,31 @@
             });
 
             function deleteRestoreResponse(response) {
-                if (response.status == 200) {
-                    var Toast = Swal.mixin({
-                        toast: true,
-                        position: 'top-end',
-                        showConfirmButton: false,
-                        timer: 5000
-                    });
+                var Toast = Swal.mixin({
+                    toast: true,
+                    position: 'top-right',
+                    iconColor: 'white',
+                    padding: '1em',
+                    customClass: {
+                        popup: 'colored-toast',
+                    },
+                    showConfirmButton: false,
+                    timer: 4000,
+                    timerProgressBar: true
+                });
 
+                if (response.status == 200) {
+                    table.DataTable().ajax.reload();
+                    deleteRestoreModalReset();
                     Toast.fire({
                         icon: response.state,
                         title: response.message,
-                        // background: 'maroon',
-                        // color: 'white',
                     })
-                    table.DataTable().ajax.reload();
-
-                    // fetchAllBlogs();
-                    deleteRestoreModalReset();
+                } else {
+                    Toast.fire({
+                        icon: response.state,
+                        title: response.message,
+                    })
                 }
             }
 

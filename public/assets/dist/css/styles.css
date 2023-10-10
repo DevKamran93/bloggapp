@@ -1,0 +1,35 @@
+.colored-toast.swal2-icon-success {
+    background: #28a745 linear-gradient(180deg, #48b461, #28a745) repeat-x !important;
+}
+
+.colored-toast.swal2-icon-error {
+    background: #dc3545 linear-gradient(180deg, #e15361, #dc3545) repeat-x !important;
+}
+
+.colored-toast.swal2-icon-warning {
+    background: #ffc107 linear-gradient(180deg, #ffca2c, #ffc107) repeat-x !important;
+}
+
+.colored-toast.swal2-icon-info {
+    background: #17a2b8 linear-gradient(180deg, #3ab0c3, #17a2b8) repeat-x !important;
+}
+
+.colored-toast.swal2-icon-question {
+    background: #6c757d linear-gradient(180deg, #828a91, #6c757d) repeat-x !important;
+}
+
+/* .colored-toast.swal2-icon-again {
+    background: #f012be linear-gradient(180deg, #f236c8, #f012be) repeat-x !important;
+} */
+
+.colored-toast .swal2-title {
+    color: white;
+}
+
+.colored-toast .swal2-close {
+    color: white;
+}
+
+.colored-toast .swal2-html-container {
+    color: white;
+}

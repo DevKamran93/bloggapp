@@ -23,11 +23,9 @@ class BlogRequestValidate extends FormRequest
      */
     public function rules()
     {
-        // Retrieve the blog ID from the database based on the slug
         if (!empty($this->slug)) {
             $blog = Blog::where('slug', Crypt::decrypt($this->slug))->first();
         }
-        // dd($blog, $this->isMethod('patch'), $this);
         $rules =  [
             'title' => 'required|max:255|unique:blogs,title,' . (!empty($blog) ? $blog->id : null),
             'category_id' => 'required',
@@ -36,14 +34,10 @@ class BlogRequestValidate extends FormRequest
             'description' => 'required',
         ];
         if ($this->isMethod('patch')) {
-            // Updating an existing blog, so image is optional
-            // dd('first');
             $rules['image'] = 'nullable|mimes:png,jpg,jpeg';
         } else {
-            // Creating a new blog, so image is required
             $rules['image'] = 'required|mimes:png,jpg,jpeg';
         }
-        // dd($rules, $blog);
         return $rules;
     }
 

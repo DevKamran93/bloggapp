@@ -80,7 +80,6 @@ class CategoryController extends Controller
             })
 
             ->only(['category_title', 'user', 'type', 'created_at', 'updated_at', 'actions'])
-            ->rawColumns(['user', 'actions'])
             ->addIndexColumn()
             ->toJson();
     }
@@ -150,10 +149,10 @@ class CategoryController extends Controller
         $category = Category::withTrashed()->where('id', $request->id)->first();
         if (is_null($category->deleted_at)) {
             $success = $category->delete();
-            $message = 'Category Successfully Deleted !';
+            $message = '<span class="h5 text-white ml-2">Category Successfully Deleted !</span>';
         } elseif (!is_null($category->deleted_at)) {
             $success = $category->restore();
-            $message = 'Category Successfully Restored !';
+            $message = '<span class="h5 text-white ml-2">Category Successfully Restored !</span>';
         }
 
         if ($success) {
@@ -162,15 +161,4 @@ class CategoryController extends Controller
             return JsonResponse(422, 'warning', 'Operation Failed, Try Again !');
         }
     }
-
-    // public function restore(Request $request)
-    // {
-    //     $category = Category::onlyTrashed()->where('id', $request->category_id);
-    //     // dd($category);
-    //     if ($category->restore()) {
-    //         return JsonResponse(200, 'success', 'Category Successfully Restore !');
-    //     } else {
-    //         return JsonResponse(422, 'warning', 'Category Not Restored !');
-    //     }
-    // }
 }

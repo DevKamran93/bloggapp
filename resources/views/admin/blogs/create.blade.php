@@ -1,4 +1,5 @@
 @extends('layouts.app')
+
 @section('content')
     <div class="row">
         <div class="col-12">
@@ -337,7 +338,6 @@
                 reader.onload = function(e) {
                     var img = new Image();
                     img.src = e.target.result;
-                    console.log(e.target.result, file.type.startsWith('image/'));
                     img.onload = function() {
                         if (img.width == 1200 && img.height == 630) {
                             $('#blog_image_preview').attr('src', e.target.result);
@@ -348,10 +348,11 @@
                             $('#blog_image_preview').attr('src', old_image);
                             $('#blog_image').val('');
                             localStorage.removeItem("image");
+                            // console.log(file.type);
                             if (!file.type || !file.type.startsWith('image/')) {
                                 displayError('Please Select an Image File !');
                             } else {
-                                displayError('Image dimensions should be 1200 x 630');
+                                displayError('Image Dimensions Should be 1200 x 630');
                             }
                         }
                     };
@@ -363,14 +364,21 @@
             function displayError(message) {
                 var Toast = Swal.mixin({
                     toast: true,
-                    position: 'top-end',
+                    position: 'top-right',
+                    iconColor: 'white',
+                    padding: '1em',
+                    customClass: {
+                        popup: 'colored-toast',
+                    },
                     showConfirmButton: false,
-                    timer: 10000
+                    timer: 4000,
+                    timerProgressBar: true
                 });
 
                 Toast.fire({
                     icon: 'error',
-                    title: message
+                    title: '<span class="h5 text-white ml-3">Wrong Image</span>',
+                    text: message,
                 });
             }
 

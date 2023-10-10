@@ -103,7 +103,6 @@ class BlogController extends Controller
             })
 
             ->only(['blog_title', 'image', 'category', 'user', 'tags', 'status', 'comments', 'created_at', 'updated_at', 'actions'])
-            ->rawColumns(['image', 'user', 'status', 'comments', 'actions'])
             ->addIndexColumn()
             ->toJson();
     }
@@ -213,14 +212,16 @@ class BlogController extends Controller
         $blog = Blog::withTrashed()->where('id', $request->id)->first();
         if (is_null($blog->deleted_at)) {
             $success = $blog->delete();
-            $message = '<h3>Blog Successfully Deleted !</h3>';
+            $state = 'error';
+            $message = '<span class="h5 text-white ml-2">Blog Successfully Deleted !</span>';
         } elseif (!is_null($blog->deleted_at)) {
             $success = $blog->restore();
-            $message = 'Blog Successfully Restored !';
+            $state = 'success';
+            $message = '<span class="h5 text-white ml-2">Blog Successfully Restored !</span>';
         }
 
         if ($success) {
-            return JsonResponse(200, 'success', "$message");
+            return JsonResponse(200, $state, "$message");
         } else {
             return JsonResponse(422, 'warning', 'Operation Failed, Try Again !');
         }
