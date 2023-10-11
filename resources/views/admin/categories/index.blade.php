@@ -78,8 +78,10 @@
                 </div>
                 <div class="modal-footer justify-content-between py-1">
                     <button type="button" class="bg-gradient-gray-dark btn btn-sm modal_close">Close</button>
-                    <button type="submit" name="submit" class="bg-gradient-navy btn btn-sm"
-                        id="create_update_btn"></button>
+                    <button type="submit" name="submit" class="bg-gradient-navy btn btn-sm" id="create_update_btn">
+                        <span class="spinner-border spinner-border-sm d-none" id="add_btn_spinner"></span>
+                        <span id="add_btn"></span>
+                    </button>
                 </div>
             </div>
         </div>
@@ -100,7 +102,7 @@
             $('#add_category').on('click', function() {
                 // RELACING MODAL TITLE & BUTTON TEXT ON CREATE
                 $('#add_edit_modal_title').html('Add New Category');
-                $('#create_update_btn').html('Create');
+                $('#create_update_btn').find('#add_btn').html('Create');
                 add_edit_form.find('#blog').val('blog');
                 add_edit_form.find('#job').val('job');
             });
@@ -108,6 +110,7 @@
             $(document).on('click', '.edit_category', function(e) {
                 e.preventDefault();
                 var edit_btn = $(this);
+
                 add_edit_form.find('#category_id').val(edit_btn.data('id'));
                 add_edit_form.find('#title').val(edit_btn.data('title'));
                 if (edit_btn.data('type') == 'blog') {
@@ -118,17 +121,18 @@
                     add_edit_form.find('#blog').val('blog');
                 }
                 $('#add_edit_modal_title').html('Edit Category');
-                $('#create_update_btn').html('Update');
+                $('#create_update_btn').find('#add_btn').html('Update');
             });
 
             $(document).on('click', '#create_update_btn', function() {
-
+                var add_btn = $(this);
+                add_btn.find('#add_btn_spinner').removeClass('d-none');
+                add_btn.attr("disabled", true);
                 let type = 'POST';
                 let url = '';
                 let category_id = $('#category_id').val();
                 let data = new FormData(add_edit_form[0]);
-                console.log(add_edit_form[0]);
-                if ($(this).text() == 'Create') {
+                if (add_btn.find('#add_btn').text() == 'Create') {
                     url = '{{ route('category.store') }}';
                 } else {
                     url = '{{ route('category.update') }}';
@@ -140,6 +144,8 @@
                     if (response.status != 200) {
                         add_edit_form.find('#toggle_btn').removeClass('is-invalid');
                         add_edit_form.find('span').removeClass('d-block').html('');
+                        $('#create_update_btn').removeAttr("disabled");
+                        $('#create_update_btn').find('#add_btn_spinner').addClass('d-none');
                         $.each(response.responseJSON.errors, function(key, value) {
                             add_edit_form.find('#' + key).addClass('is-invalid');
                             add_edit_form.find('#' + key).siblings('span').addClass('d-block').html(
@@ -163,6 +169,7 @@
                                 padding: '1em',
                                 customClass: {
                                     popup: 'colored-toast',
+                                    title: 'swal2-styled',
                                 },
                                 showConfirmButton: false,
                                 timer: 4000,
@@ -186,6 +193,8 @@
                 add_edit_form.find("input").removeAttr('checked value');
                 add_edit_form.trigger('reset');
                 add_edit_form.find('label').removeClass('active');
+                $('#create_update_btn').removeAttr("disabled");
+                $('#create_update_btn').find('#add_btn_spinner').addClass('d-none');
                 add_edit_form.parents('.modal').modal('hide');
             }
 
@@ -266,7 +275,8 @@
                     delete_restore_modal_heading.children('h5').html('Delete ?');
                     delete_restore_modal_body.children('h6').html('Are You Sure, You Want To Delete ?');
                     delete_restore_modal_btn.removeClass('bg-gradient-success').addClass(
-                        'bg-gradient-danger').text('Delete');
+                        'bg-gradient-danger');
+                    delete_restore_modal_btn.find('#confirm_btn_text').text('Delete');
                     delete_restore_modal_btn.attr('data-action', action_btn.data('action'));
                 } else {
                     delete_restore_modal_heading.removeClass('bg-gradient-danger').addClass(
@@ -274,16 +284,20 @@
                     delete_restore_modal_heading.children('h5').html('Restore ?');
                     delete_restore_modal_body.children('h6').html('Are You Sure, You Want To Restore ?');
                     delete_restore_modal_btn.removeClass('bg-gradient-danger').addClass(
-                        'bg-gradient-success').text('Restore');
+                        'bg-gradient-success');
+                    delete_restore_modal_btn.find('#confirm_btn_text').text('Delete');
                     delete_restore_modal_btn.attr('data-action', action_btn.data('action'));
                 }
 
                 delete_restore_modal.find('#delete_restore_form #id').val(action_btn.data('id'));
             });
 
-            $(document).on('click', '#delete_restore_modal_btn', function(e) {
+            $(document).on('click', '#delete_restore_modal_btn', function() {
+                // var action_btn = $(this);
+                var confirm_btn = $(this);
+                confirm_btn.find('#delete_btn_spinner').removeClass('d-none');
+                confirm_btn.addClass('disabled');
                 let dalate_restore_form = $('#delete_restore_form');
-                var action_btn = $(this);
                 var url = "{{ route('category.destroyOrRestore') }}";
                 var data = new FormData(dalate_restore_form[0]);
 
@@ -298,6 +312,7 @@
                     padding: '1em',
                     customClass: {
                         popup: 'colored-toast',
+                        title: 'swal2-styled',
                     },
                     showConfirmButton: false,
                     timer: 4000,
@@ -330,8 +345,10 @@
                 delete_restore_modal.find('#delete_restore_modal_heading').removeClass(
                     'bg-gradient-success, bg-gradient-danger');
                 delete_restore_modal.find('#delete_restore_modal_btn').removeClass(
-                    'bg-gradient-success, bg-gradient-danger');
+                    'bg-gradient-success, bg-gradient-danger disabled');
+                $('#delete_restore_modal_btn').find('#delete_btn_spinner').addClass('d-none');
                 delete_restore_modal.modal('hide');
+
             }
         });
     </script>

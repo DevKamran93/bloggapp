@@ -125,7 +125,10 @@
                             </div>
                             <div class="col-12 text-center">
                                 <a href="{{ route('blogs') }}" class="btn bg-gradient-gray-dark btn-sm mr-2">Back</a>
-                                <button type="submit" class="btn bg-gradient-navy btn-sm">Update</button>
+                                <button type="submit" class="btn bg-gradient-navy btn-sm" id="save_update_btn">
+                                    <span class="spinner-border spinner-border-sm d-none"
+                                        id="save_update_btn_spinner"></span>
+                                    Update</button>
                             </div>
                         </div>
                     </form>

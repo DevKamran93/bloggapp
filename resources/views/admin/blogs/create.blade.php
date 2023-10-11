@@ -122,7 +122,10 @@
                             </div>
                             <div class="col-12 text-center">
                                 <a href="{{ route('blogs') }}" class="btn bg-gradient-gray-dark btn-sm mr-2">Back</a>
-                                <button type="submit" class="btn bg-gradient-navy btn-sm">Save</button>
+                                <button type="submit" class="btn bg-gradient-navy btn-sm" id="save_update_btn">
+                                    <span class="spinner-border spinner-border-sm d-none"
+                                        id="save_update_btn_spinner"></span>
+                                    Save</button>
                             </div>
                         </div>
                     </form>
@@ -141,6 +144,8 @@
     @endif
 @endsection
 @push('javascript')
+    <script src="{{ asset('assets/dist/js/common.js') }}"></script>
+
     <script>
         // $(document).ready(function() {
         //     var image = localStorage.getItem("image");

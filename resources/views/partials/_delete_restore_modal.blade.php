@@ -15,7 +15,10 @@
              </div>
              <div class="modal-footer justify-content-between py-1">
                  <button type="button" class="btn bg-gradient-gray-dark btn-sm delete_restore_close">Close</button>
-                 <button type="submit" name="submit" class="btn btn-sm" id="delete_restore_modal_btn"></button>
+                 <button type="submit" name="submit" class="btn btn-sm" id="delete_restore_modal_btn">
+                     <span class="spinner-border spinner-border-sm d-none" id="delete_btn_spinner"></span>
+                     <span id="confirm_btn_text"></span>
+                 </button>
              </div>
          </div>
      </div>

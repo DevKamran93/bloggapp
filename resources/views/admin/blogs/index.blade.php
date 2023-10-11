@@ -171,7 +171,8 @@
                     delete_restore_modal_heading.children('h5').html('Delete ?');
                     delete_restore_modal_body.children('h6').html('Are You Sure, You Want To Delete ?');
                     delete_restore_modal_btn.removeClass('bg-gradient-success').addClass(
-                        'bg-gradient-danger').text('Delete');
+                        'bg-gradient-danger');
+                    delete_restore_modal_btn.find('#confirm_btn_text').text('Delete');
                     delete_restore_modal_btn.attr('data-action', action_btn.data('action'));
                 } else {
                     delete_restore_modal_heading.removeClass('bg-gradient-danger').addClass(
@@ -179,7 +180,8 @@
                     delete_restore_modal_heading.children('h5').html('Restore ?');
                     delete_restore_modal_body.children('h6').html('Are You Sure, You Want To Restore ?');
                     delete_restore_modal_btn.removeClass('bg-gradient-danger').addClass(
-                        'bg-gradient-success').text('Restore');
+                        'bg-gradient-success');
+                    delete_restore_modal_btn.find('#confirm_btn_text').text('Restore');
                     delete_restore_modal_btn.attr('data-action', action_btn.data('action'));
                 }
 
@@ -187,8 +189,10 @@
             });
 
             $(document).on('click', '#delete_restore_modal_btn', function(e) {
+                var confirm_btn = $(this);
+                confirm_btn.find('#delete_btn_spinner').removeClass('d-none');
+                confirm_btn.addClass('disabled');
                 let dalate_restore_form = $('#delete_restore_form');
-                var action_btn = $(this);
                 var url = "{{ route('blog.destroyOrRestore') }}";
                 var data = new FormData(dalate_restore_form[0]);
 
@@ -198,11 +202,14 @@
             function deleteRestoreResponse(response) {
                 var Toast = Swal.mixin({
                     toast: true,
-                    position: 'top-right',
+                    position: 'top-center',
+                    loader: true,
                     iconColor: 'white',
                     padding: '1em',
                     customClass: {
                         popup: 'colored-toast',
+                        title: 'swal2-styled',
+                        loader: 'spinner-border text-light',
                     },
                     showConfirmButton: false,
                     timer: 4000,
@@ -233,7 +240,8 @@
                 delete_restore_modal.find('#delete_restore_modal_heading').removeClass(
                     'bg-gradient-success, bg-gradient-danger');
                 delete_restore_modal.find('#delete_restore_modal_btn').removeClass(
-                    'bg-gradient-success, bg-gradient-danger');
+                    'bg-gradient-success, bg-gradient-danger disabled');
+                $('#delete_restore_modal_btn').find('#delete_btn_spinner').addClass('d-none');
                 delete_restore_modal.modal('hide');
             }
         });

@@ -212,16 +212,14 @@ class BlogController extends Controller
         $blog = Blog::withTrashed()->where('id', $request->id)->first();
         if (is_null($blog->deleted_at)) {
             $success = $blog->delete();
-            $state = 'error';
-            $message = '<span class="h5 text-white ml-2">Blog Successfully Deleted !</span>';
+            $message = 'Deleted';
         } elseif (!is_null($blog->deleted_at)) {
             $success = $blog->restore();
-            $state = 'success';
-            $message = '<span class="h5 text-white ml-2">Blog Successfully Restored !</span>';
+            $message = 'Restored';
         }
 
         if ($success) {
-            return JsonResponse(200, $state, "$message");
+            return JsonResponse(200, 'success', "Blog Successfully $message !");
         } else {
             return JsonResponse(422, 'warning', 'Operation Failed, Try Again !');
         }

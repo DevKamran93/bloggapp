@@ -7,6 +7,7 @@ use App\Models\Admin\Category;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Requests\CategoryRequestValidate;
+use Exception;
 use Yajra\DataTables\Facades\DataTables;
 
 class CategoryController extends Controller
@@ -96,12 +97,27 @@ class CategoryController extends Controller
      */
     public function store(CategoryRequestValidate $request)
     {
-        $category = Category::create([
-            'title' => $request->title,
-            'slug' => uniqueSlug($request->title),
-            'type' => $request->type,
-            'user_id' => Auth::id(),
-        ]);
+        try {
+            $category = Category::create([
+                'title' => $request->title,
+                'slug' => uniqueSlug($request->title),
+                'type' => $request->type,
+                'user_id' => Auth::id(),
+                'product' => Auth::id(),
+            ]);
+        } catch (Exception $e) {
+            $message = $e->getMessage();
+
+            var_dump('Exception Message: ' . $message);
+
+            $code = $e->getCode();
+
+            var_dump('Exception Code: ' . $code);
+
+            $string = $e->__toString();
+
+            var_dump('Exception String: ' . $string);
+        }
         if ($category) {
             return JsonResponse(200, 'success', 'Category Successfully Added !');
         } else {
@@ -149,14 +165,14 @@ class CategoryController extends Controller
         $category = Category::withTrashed()->where('id', $request->id)->first();
         if (is_null($category->deleted_at)) {
             $success = $category->delete();
-            $message = '<span class="h5 text-white ml-2">Category Successfully Deleted !</span>';
+            $message = 'Deleted';
         } elseif (!is_null($category->deleted_at)) {
             $success = $category->restore();
-            $message = '<span class="h5 text-white ml-2">Category Successfully Restored !</span>';
+            $message = 'Restored';
         }
 
         if ($success) {
-            return JsonResponse(200, 'success', "$message");
+            return JsonResponse(200, 'success', "Category Successfully $message !");
         } else {
             return JsonResponse(422, 'warning', 'Operation Failed, Try Again !');
         }
