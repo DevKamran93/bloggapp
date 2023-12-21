@@ -13,7 +13,9 @@ return new class extends Migration
     {
         Schema::create('roles', function (Blueprint $table) {
             $table->id();
-            $table->string('name');
+            $table->string('name')->nullable();
+            $table->string('type')->nullable();
+            $table->enum('status', ['0', '1'])->default('0');
             $table->timestamps();
             $table->softDeletes()->nullable();
         });

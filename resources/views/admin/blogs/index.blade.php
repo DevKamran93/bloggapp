@@ -28,6 +28,14 @@
             </div>
         </div>
     </div>
+    <div class="bootstrap-switch bootstrap-switch-wrapper bootstrap-switch-focused bootstrap-switch-animate bootstrap-switch-off"
+        style="width: 85.6px;">
+        <div class="bootstrap-switch-container" style="width: 126px; margin-left: -42px;"><span
+                class="bootstrap-switch-handle-on bootstrap-switch-primary" style="width: 42px;">ON</span><span
+                class="bootstrap-switch-label" style="width: 42px;">&nbsp;</span><span
+                class="bootstrap-switch-handle-off bootstrap-switch-default" style="width: 42px;">OFF</span><input
+                type="checkbox" name="my-checkbox" checked="" data-bootstrap-switch=""></div>
+    </div>
     @include('partials._delete_restore_modal')
 
 
@@ -158,36 +166,6 @@
                 // });
             }
 
-            $(document).on('click', '.delete_restore_category', function() {
-                var action_btn = $(this);
-                var delete_restore_modal_heading = delete_restore_modal.find(
-                    '#delete_restore_modal_heading');
-                var delete_restore_modal_btn = delete_restore_modal.find('#delete_restore_modal_btn');
-                var delete_restore_modal_body = delete_restore_modal.find('#delete_restore_modal_body');
-
-                if (action_btn.data('action') == 'delete') {
-                    delete_restore_modal_heading.removeClass('bg-gradient-success').addClass(
-                        'bg-gradient-danger');
-                    delete_restore_modal_heading.children('h5').html('Delete ?');
-                    delete_restore_modal_body.children('h6').html('Are You Sure, You Want To Delete ?');
-                    delete_restore_modal_btn.removeClass('bg-gradient-success').addClass(
-                        'bg-gradient-danger');
-                    delete_restore_modal_btn.find('#confirm_btn_text').text('Delete');
-                    delete_restore_modal_btn.attr('data-action', action_btn.data('action'));
-                } else {
-                    delete_restore_modal_heading.removeClass('bg-gradient-danger').addClass(
-                        'bg-gradient-success');
-                    delete_restore_modal_heading.children('h5').html('Restore ?');
-                    delete_restore_modal_body.children('h6').html('Are You Sure, You Want To Restore ?');
-                    delete_restore_modal_btn.removeClass('bg-gradient-danger').addClass(
-                        'bg-gradient-success');
-                    delete_restore_modal_btn.find('#confirm_btn_text').text('Restore');
-                    delete_restore_modal_btn.attr('data-action', action_btn.data('action'));
-                }
-
-                delete_restore_modal.find('#delete_restore_form #id').val(action_btn.data('id'));
-            });
-
             $(document).on('click', '#delete_restore_modal_btn', function(e) {
                 var confirm_btn = $(this);
                 confirm_btn.find('#delete_btn_spinner').removeClass('d-none');
@@ -202,7 +180,7 @@
             function deleteRestoreResponse(response) {
                 var Toast = Swal.mixin({
                     toast: true,
-                    position: 'top-center',
+                    position: 'top-right',
                     loader: true,
                     iconColor: 'white',
                     padding: '1em',

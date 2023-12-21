@@ -7,6 +7,8 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\Admin\DashboardController;
+use App\Http\Controllers\Admin\RoleController;
+use App\Models\Admin\Role;
 
 /*
 |--------------------------------------------------------------------------
@@ -22,6 +24,7 @@ use App\Http\Controllers\Admin\DashboardController;
 Route::group(['middleware' => 'guest'], function () {
     Route::get('/', [HomeController::class, 'index'])->name('home');
 });
+// dd(Hash::make('admin123'));
 Route::get('/', function () {
     return view('welcome');
 });
@@ -47,6 +50,15 @@ Route::group(['prefix' => 'admin', 'middleware' => 'auth'], function () {
     Route::get('/blog/edit/{slug}', [BlogController::class, 'edit'])->name('blog.edit');
     Route::patch('/blog/update', [BlogController::class, 'update'])->name('blog.update');
     Route::post('/blog/destroyOrRestore', [BlogController::class, 'destroyOrRestore'])->name('blog.destroyOrRestore');
+
+    // Roles Routes
+    Route::get('/roles', [RoleController::class, 'index'])->name('roles');
+    Route::get('/role/create', [RoleController::class, 'create'])->name('role.create');
+    Route::post('/role/store', [RoleController::class, 'store'])->name('role.store');
+    Route::get('/role/getAllRoles', [RoleController::class, 'getAllRolesData'])->name('role.getAllRolesData');
+    // Route::get('/blog/edit/{slug}', [RoleController::class, 'edit'])->name('blog.edit');
+    Route::patch('/role/update', [RoleController::class, 'update'])->name('role.update');
+    Route::post('/role/destroyOrRestore', [RoleController::class, 'destroyOrRestore'])->name('role.destroyOrRestore');
 
     // Route::post('/categories/restore', [CategoryController::class, 'restore'])->name('category.restore');
 });

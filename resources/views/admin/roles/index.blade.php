@@ -1,110 +1,122 @@
 @extends('layouts.app')
 @section('content')
-    <div class="row">
-        <div class="col-12">
-            <div class="card">
-                <div class="card-body p-2">
-                    <table id="category_table" class="table-bordered table-striped table-sm table text-center">
-                        <thead class="bg-gradient-navy text-white">
-                            <tr>
-                                <th>Sr #</th>
-                                <th>Title</th>
-                                <th>Type</th>
-                                <th>Added By</th>
-                                <th>Created At</th>
-                                <th>Updated</th>
-                                <th>Action</th>
-                            </tr>
-                        </thead>
-                    </table>
+<div class="row">
+    {{-- <div class="col-12">
+        <h3 class="no-margin text-semibold text-center">Occupied Disk Space - Techsolutionstuff</h3>
+        <div class="col-sm-12 col-md-4 col-md-offset-4">
+            <div class="progress progress-micro mb-10">
+                <div class="progress-bar bg-indigo-400" style="width: {{$diskuse}}">
+                    <span class="sr-only">{{$diskuse}}</span>
                 </div>
+            </div>
+            <span class="pull-right">{{round($diskusedize,2)}} GB /
+                {{round($disktotalsize,2)}} GB ({{$diskuse}})</span>
+        </div>
+    </div> --}}
+    <div class="col-12">
+        <div class="card">
+            <div class="card-body p-2">
+                <table id="roles_table" class="table-bordered table-striped table-sm table text-center">
+                    <thead class="bg-gradient-navy text-white">
+                        <tr>
+                            <th>Sr #</th>
+                            <th>Name</th>
+                            <th>Type</th>
+                            <th>Status</th>
+                            <th>Created At</th>
+                            <th>Updated</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                </table>
             </div>
         </div>
     </div>
-    <div class="modal fade" id="add_edit_category_modal" data-backdrop="static" data-keyboard="false">
-        <div class="modal-dialog modal-dialog-centered">
-            <div class="modal-content">
-                <div class="modal-header bg-gradient-navy py-2">
-                    <h5 class="h5 modal-title font-weight-bold" id="add_edit_modal_title"></h5>
-                    <button type="button" class="close modal_close">
-                        <i class="bg-gradient-danger fa fa-times fa-xs rounded px-2 py-1"></i>
-                    </button>
-                </div>
-                <div class="modal-body pb-0">
-                    <form class="form" role="form" id="add_update_category_form">
-                        @csrf
-                        <input type="hidden" name="category_id" id="category_id">
-                        <div class="form-group">
-                            <label for="title">Category Title</label>
-                            <input type="text" name="title" class="form-control" id="title">
-                            <span class="invalid-feedback" role="alert">
-                                <strong></strong>
-                            </span>
-                        </div>
-                        <div class="form-group">
-                            <label for="type">Category Type</label>
-                            <br>
-                            <div class="d-flex justify-content-between" id="type">
-                                <div class="d-inline icheck-navy">
-                                    <input type="radio" name="type" id="blog" value="blog">
-                                    <label for="blog">Blog</label>
-                                </div>
-                                <div class="d-inline icheck-navy ml-auto mr-auto">
-                                    <input type="radio" name="type" id="job" value="job">
-                                    <label for="job">Job</label>
-                                </div>
+</div>
+<div class="modal fade" id="add_edit_role_modal" data-backdrop="static" data-keyboard="false">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header bg-gradient-navy py-2">
+                <h5 class="h5 modal-title font-weight-bold" id="add_edit_modal_title"></h5>
+                <button type="button" class="close modal_close">
+                    <i class="bg-gradient-danger fa fa-times fa-xs rounded px-2 py-1"></i>
+                </button>
+            </div>
+            <div class="modal-body pb-0">
+                <form class="form" role="form" id="add_update_role_form">
+                    @csrf
+                    <input type="hidden" name="role_id" id="role_id">
+                    <div class="form-group">
+                        <label for="name">Name</label>
+                        <input type="text" name="name" class="form-control" id="name">
+                        <span class="invalid-feedback" role="alert">
+                            <strong></strong>
+                        </span>
+                    </div>
+                    <div class="form-group">
+                        <label for="type">Role Type</label>
+                        <br>
+                        <div class="d-flex justify-content-between" id="type">
+                            <div class="d-inline icheck-navy">
+                                <input type="radio" name="type" id="sub_admin" value="sub_admin">
+                                <label for="sub_admin">Sub Admin</label>
                             </div>
-                            <span class="invalid-feedback" role="alert">
-                                <strong></strong>
-                            </span>
+                            <div class="d-inline icheck-navy ml-auto mr-auto">
+                                <input type="radio" name="type" id="moderator" value="moderator">
+                                <label for="moderator">Moderator</label>
+                            </div>
                         </div>
-                    </form>
-                </div>
-                <div class="modal-footer justify-content-between py-1">
-                    <button type="button" class="bg-gradient-gray-dark btn btn-sm modal_close">Close</button>
-                    <button type="submit" name="submit" class="bg-gradient-navy btn btn-sm" id="create_update_btn">
-                        <span class="spinner-border spinner-border-sm d-none" id="add_btn_spinner"></span>
-                        <span id="add_btn"></span>
-                    </button>
-                </div>
+                        <span class="invalid-feedback" role="alert">
+                            <strong></strong>
+                        </span>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer justify-content-between py-1">
+                <button type="button" class="bg-gradient-gray-dark btn btn-sm modal_close">Close</button>
+                <button type="submit" name="submit" class="bg-gradient-navy btn btn-sm" id="create_update_btn">
+                    <span class="spinner-border spinner-border-sm d-none" id="add_btn_spinner"></span>
+                    <span id="add_btn"></span>
+                </button>
             </div>
         </div>
     </div>
+</div>
 
-    @include('partials._delete_restore_modal')
+@include('partials._delete_restore_modal')
 @endsection
 @push('javascript')
-    <script>
-        $(document).ready(function() {
+<script>
+    $(document).ready(function() {
 
-            var add_edit_form = $('#add_update_category_form');
+            var add_edit_form = $('#add_update_role_form');
             var delete_restore_modal = $('#delete_restore_modal');
-            var table = $("#category_table");
+            var table = $("#roles_table");
 
-            fetchAllCategories();
+            fetchAllRoles();
 
-            $('#add_category').on('click', function() {
+            $('#add_role').on('click', function() {
                 // RELACING MODAL TITLE & BUTTON TEXT ON CREATE
-                $('#add_edit_modal_title').html('Add New Category');
+                $('#add_edit_modal_title').html('Add New Role');
                 $('#create_update_btn').find('#add_btn').html('Create');
-                add_edit_form.find('#blog').val('blog');
-                add_edit_form.find('#job').val('job');
+                add_edit_form.find('#sub_admin').val('sub_admin');
+                add_edit_form.find('#moderator').val('moderator');
             });
 
-            $(document).on('click', '.edit_category', function(e) {
+            $(document).on('click', '.edit_role', function(e) {
                 e.preventDefault();
                 var edit_btn = $(this);
 
-                add_edit_form.find('#category_id').val(edit_btn.data('id'));
-                add_edit_form.find('#title').val(edit_btn.data('title'));
-                if (edit_btn.data('type') == 'blog') {
-                    add_edit_form.find('#blog').val('blog').attr('checked', '');
-                    add_edit_form.find('#job').val('job');
+                add_edit_form.find('#role_id').val(edit_btn.data('id'));
+                add_edit_form.find('#name').val(edit_btn.data('name'));
+                if (edit_btn.data('type') == 'sub_admin') {
+                    add_edit_form.find('#sub_admin').val('sub_admin').attr('checked', '');
+                    add_edit_form.find('#moderator').val('moderator');
                 } else {
-                    add_edit_form.find('#job').val('job').attr('checked', '');
-                    add_edit_form.find('#blog').val('blog');
+                    add_edit_form.find('#sub_admin').val('sub_admin');
+                    add_edit_form.find('#moderator').val('moderator').attr('checked', '');
                 }
-                $('#add_edit_modal_title').html('Edit Category');
+                $('#add_edit_modal_title').html('Edit Role');
                 $('#create_update_btn').find('#add_btn').html('Update');
             });
 
@@ -114,17 +126,17 @@
                 add_btn.attr("disabled", true);
                 let type = 'POST';
                 let url = '';
-                let category_id = $('#category_id').val();
+                let role_id = $('#role_id').val();
                 let data = new FormData(add_edit_form[0]);
                 if (add_btn.find('#add_btn').text() == 'Create') {
-                    url = '{{ route('category.store') }}';
+                    url = '{{ route('role.store') }}';
                 } else {
-                    url = '{{ route('category.update') }}';
+                    url = '{{ route('role.update') }}';
                     data.append('_method', 'PATCH');
                 }
-                SendAjaxRequestToServer(type, url, data, '', createUpdateCategoryResponse);
+                SendAjaxRequestToServer(type, url, data, '', createUpdateRoleResponse);
 
-                function createUpdateCategoryResponse(response) {
+                function createUpdateRoleResponse(response) {
                     if (response.status != 200) {
                         add_edit_form.find('#toggle_btn').removeClass('is-invalid');
                         add_edit_form.find('span').removeClass('d-block').html('');
@@ -182,7 +194,7 @@
                 add_edit_form.parents('.modal').modal('hide');
             }
 
-            function fetchAllCategories() {
+            function fetchAllRoles() {
                 table.DataTable({
                     "pagingType": 'numbers',
                     // "ordering": true,
@@ -197,7 +209,7 @@
                     "autoWidth": true,
                     "processing": true,
                     "serverSide": true,
-                    "ajax": "{{ route('category.getAllCategoryData') }}",
+                    "ajax": "{{ route('role.getAllRolesData') }}",
                     "buttons": ["copy", "csv", "excel", "pdf", "print", "colvis"],
                     columns: [{
                             data: 'DT_RowIndex',
@@ -206,8 +218,8 @@
                             searchable: false
                         },
                         {
-                            data: 'category_title',
-                            name: 'category_title',
+                            data: 'name',
+                            name: 'name',
                             orderable: true,
                             searchable: true
                         },
@@ -218,8 +230,8 @@
                             searchable: true
                         },
                         {
-                            data: 'user',
-                            name: 'user',
+                            data: 'status',
+                            name: 'status',
                             orderable: false,
                             searchable: false
                         },
@@ -245,44 +257,13 @@
                 }).buttons().container().appendTo('#example1_wrapper .col-md-6:eq(0)');
             }
 
-
-            $(document).on('click', '.delete_restore_category', function() {
-                var action_btn = $(this);
-                var delete_restore_modal_heading = delete_restore_modal.find(
-                    '#delete_restore_modal_heading');
-                var delete_restore_modal_btn = delete_restore_modal.find('#delete_restore_modal_btn');
-                var delete_restore_modal_body = delete_restore_modal.find('#delete_restore_modal_body');
-
-                if (action_btn.data('action') == 'delete') {
-                    delete_restore_modal_heading.removeClass('bg-gradient-success').addClass(
-                        'bg-gradient-danger');
-                    delete_restore_modal_heading.children('h5').html('Delete ?');
-                    delete_restore_modal_body.children('h6').html('Are You Sure, You Want To Delete ?');
-                    delete_restore_modal_btn.removeClass('bg-gradient-success').addClass(
-                        'bg-gradient-danger');
-                    delete_restore_modal_btn.find('#confirm_btn_text').text('Delete');
-                    delete_restore_modal_btn.attr('data-action', action_btn.data('action'));
-                } else {
-                    delete_restore_modal_heading.removeClass('bg-gradient-danger').addClass(
-                        'bg-gradient-success');
-                    delete_restore_modal_heading.children('h5').html('Restore ?');
-                    delete_restore_modal_body.children('h6').html('Are You Sure, You Want To Restore ?');
-                    delete_restore_modal_btn.removeClass('bg-gradient-danger').addClass(
-                        'bg-gradient-success');
-                    delete_restore_modal_btn.find('#confirm_btn_text').text('Delete');
-                    delete_restore_modal_btn.attr('data-action', action_btn.data('action'));
-                }
-
-                delete_restore_modal.find('#delete_restore_form #id').val(action_btn.data('id'));
-            });
-
             $(document).on('click', '#delete_restore_modal_btn', function() {
                 // var action_btn = $(this);
                 var confirm_btn = $(this);
                 confirm_btn.find('#delete_btn_spinner').removeClass('d-none');
                 confirm_btn.addClass('disabled');
                 let dalate_restore_form = $('#delete_restore_form');
-                var url = "{{ route('category.destroyOrRestore') }}";
+                var url = "{{ route('role.destroyOrRestore') }}";
                 var data = new FormData(dalate_restore_form[0]);
 
                 SendAjaxRequestToServer('POST', url, data, 'json', deleteRestoreResponse);
@@ -323,7 +304,7 @@
             $('.delete_restore_close').click(deleteRestoreModalReset);
 
             function deleteRestoreModalReset() {
-                delete_restore_modal.find('#delete_restore_form #category_id').removeAttr('value');
+                delete_restore_modal.find('#delete_restore_form #role_id').removeAttr('value');
                 delete_restore_modal.find('#delete_restore_modal_btn').removeAttr(
                     "data-action");
                 delete_restore_modal.find('#delete_restore_modal_heading').removeClass(
@@ -335,5 +316,5 @@
 
             }
         });
-    </script>
+</script>
 @endpush
